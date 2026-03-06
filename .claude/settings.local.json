@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(rm:*)",
+      "Bash(wc:*)",
+      "Bash(npm run:*)",
+      "Bash(npx tsc:*)",
+      "Bash(netstat:*)",
+      "Bash(powershell:*)",
+      "Bash(npx vite:*)",
+      "Bash(taskkill:*)"
+    ]
+  }
+}
