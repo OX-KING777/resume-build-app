@@ -3,8 +3,6 @@ import {
   Paragraph,
   TextRun,
   Packer,
-  AlignmentType,
-  TabStopPosition,
   TabStopType,
   BorderStyle,
 } from 'docx';
