@@ -10,8 +10,10 @@ import type {
   AiWarning,
 } from '@/types/resume';
 import { generateResume } from '@/services/aiService';
+import type { ProfileName } from '@/services/aiService';
 
 interface ResumeState {
+  selectedProfile: ProfileName;
   personalInfo: PersonalInfo;
   workExperience: WorkExperience[];
   education: Education[];
@@ -23,6 +25,9 @@ interface ResumeState {
   generationStatus: 'idle' | 'generating' | 'success' | 'error';
   generationError: string | null;
   aiWarnings: AiWarning[];
+
+  // Profile
+  setProfile: (profile: ProfileName) => void;
 
   // Personal Info
   updatePersonalInfo: (info: Partial<PersonalInfo>) => void;
@@ -68,7 +73,7 @@ const defaultPersonalInfo: PersonalInfo = {
   email: 'allenwang4117@gmail.com',
   phone: '(484) 521-9645',
   address: 'Brookline, MA 02446',
-  linkedin: 'LinkedIn',
+  linkedin: '',
   website: '',
   summary: '',
 };
@@ -202,14 +207,142 @@ const createDefaultSkills = (): Skill[] => [
   },
 ];
 
-const getDefaultState = () => ({
-  personalInfo: { ...defaultPersonalInfo },
-  workExperience: createDefaultWorkExperience(),
-  education: createDefaultEducation(),
-  certifications: [] as Certification[],
-  skills: createDefaultSkills(),
+// ─── ALBERT KONG DEFAULTS ───────────────────────────────────────────────────
+
+const albertPersonalInfo: PersonalInfo = {
+  fullName: 'Albert Kong',
+  email: 'albertkong211@gmail.com',
+  phone: '(929) 309-1138',
+  address: 'Austin, TX 78701',
+  linkedin: '',
+  website: '',
+  summary: '',
+};
+
+const createAlbertWorkExperience = (): WorkExperience[] => [
+  {
+    id: createId(),
+    company: 'Google',
+    location: 'Austin, TX',
+    position: '',
+    startDate: 'May 2024',
+    endDate: '',
+    current: true,
+    description: '',
+    highlights: [],
+  },
+  {
+    id: createId(),
+    company: 'Ladder',
+    location: 'Remote',
+    position: '',
+    startDate: 'Aug 2022',
+    endDate: 'May 2024',
+    current: false,
+    description: '',
+    highlights: [],
+  },
+  {
+    id: createId(),
+    company: 'Roblox',
+    location: 'San Mateo, CA',
+    position: '',
+    startDate: 'Aug 2019',
+    endDate: 'Aug 2022',
+    current: false,
+    description: '',
+    highlights: [],
+  },
+  {
+    id: createId(),
+    company: 'HackIllinois',
+    location: 'Champaign, IL',
+    position: '',
+    startDate: 'Jun 2018',
+    endDate: 'Aug 2019',
+    current: false,
+    description: '',
+    highlights: [],
+  },
+];
+
+const createAlbertEducation = (): Education[] => [
+  {
+    id: createId(),
+    institution: 'University of Illinois Urbana-Champaign',
+    degree: 'Bachelor of Science',
+    field: 'Computer Engineering & Computer Science',
+    startDate: '2014',
+    endDate: '2018',
+    gpa: '',
+    description: '',
+  },
+];
+
+const createAlbertSkills = (): Skill[] => [
+  {
+    id: createId(),
+    category: 'Languages',
+    items: 'Java, Go, C++, Python, TypeScript, JavaScript, Lua, SQL',
+  },
+  {
+    id: createId(),
+    category: 'Cloud & Infrastructure',
+    items: 'Google Cloud Platform, BigQuery, Spanner, GKE, Kubernetes, Docker, Cloud Functions, Pub/Sub',
+  },
+  {
+    id: createId(),
+    category: 'Frontend & Web',
+    items: 'React, TypeScript, Angular, GraphQL, REST APIs, HTML, CSS',
+  },
+  {
+    id: createId(),
+    category: 'Backend & Data',
+    items: 'Node.js, gRPC, Protocol Buffers, PostgreSQL, Redis, Kafka, Data Pipelines',
+  },
+  {
+    id: createId(),
+    category: 'Tools & Practices',
+    items: 'Git, CI/CD, Agile/Scrum, Code Review, Unit Testing, Integration Testing',
+  },
+  {
+    id: createId(),
+    category: 'Systems & Architecture',
+    items: 'Distributed Systems, Microservices, Real-Time Systems, Performance Optimization, System Design',
+  },
+];
+
+// ─── PROFILE DEFAULTS ───────────────────────────────────────────────────────
+
+const getProfileDefaults = (profile: ProfileName) => {
+  if (profile === 'albert') {
+    return {
+      personalInfo: { ...albertPersonalInfo },
+      workExperience: createAlbertWorkExperience(),
+      education: createAlbertEducation(),
+      certifications: [] as Certification[],
+      skills: createAlbertSkills(),
+    };
+  }
+  return {
+    personalInfo: { ...defaultPersonalInfo },
+    workExperience: createDefaultWorkExperience(),
+    education: createDefaultEducation(),
+    certifications: [] as Certification[],
+    skills: createDefaultSkills(),
+  };
+};
+
+const PROFILE_TEMPLATE: Record<ProfileName, TemplateName> = {
+  allen: 'classic',
+  albert: 'sidebar',
+};
+
+const getDefaultState = (profile: ProfileName = 'allen') => ({
+  selectedProfile: profile,
+  ...getProfileDefaults(profile),
   jobDescription: '',
-  selectedTemplate: 'classic' as TemplateName,
+  selectedTemplate: PROFILE_TEMPLATE[profile],
   mainTitle: '',
   generationStatus: 'idle' as const,
   generationError: null as string | null,
@@ -218,8 +351,13 @@ const getDefaultState = () => ({
 
 export const useResumeStore = create<ResumeState>()(
   persist(
-    (set, _get) => ({
+    (set, get) => ({
       ...getDefaultState(),
+
+      setProfile: (profile) => {
+        const defaults = getDefaultState(profile);
+        set(defaults);
+      },
 
       updatePersonalInfo: (info) =>
         set((state) => ({
@@ -342,7 +480,7 @@ export const useResumeStore = create<ResumeState>()(
       generateFromJobDescription: async (jd: string) => {
         set({ generationStatus: 'generating', generationError: null, aiWarnings: [] });
         try {
-          const result = await generateResume(jd);
+          const result = await generateResume(jd, get().selectedProfile);
 
           // Map warnings
           const warnings = result.warnings || [];
@@ -396,12 +534,10 @@ export const useResumeStore = create<ResumeState>()(
       },
 
       clearGeneration: () => {
-        const defaults = getDefaultState();
+        const profile = get().selectedProfile;
+        const defaults = getProfileDefaults(profile);
         set({
-          personalInfo: defaults.personalInfo,
-          workExperience: defaults.workExperience,
-          education: defaults.education,
-          skills: defaults.skills,
+          ...defaults,
           mainTitle: '',
           generationStatus: 'idle',
           generationError: null,
@@ -410,12 +546,14 @@ export const useResumeStore = create<ResumeState>()(
       },
 
       resetToDefaults: () => {
-        set(getDefaultState());
+        const profile = get().selectedProfile;
+        set(getDefaultState(profile));
       },
     }),
     {
       name: 'resume-builder-storage-v3',
       partialize: (state) => ({
+        selectedProfile: state.selectedProfile,
         personalInfo: state.personalInfo,
         workExperience: state.workExperience,
         education: state.education,

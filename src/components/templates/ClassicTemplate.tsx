@@ -59,7 +59,6 @@ export function ClassicTemplate({
   if (personalInfo.phone) contactItems.push(personalInfo.phone);
   if (personalInfo.email) contactItems.push(personalInfo.email);
   if (personalInfo.address) contactItems.push(personalInfo.address);
-  if (personalInfo.linkedin) contactItems.push(personalInfo.linkedin);
   if (personalInfo.website) contactItems.push(personalInfo.website);
 
   return (

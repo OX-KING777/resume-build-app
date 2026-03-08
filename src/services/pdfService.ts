@@ -113,10 +113,12 @@ function drawWrappedText(
   fontSize: number,
   color: [number, number, number],
   lineHeight: number = LINE_HEIGHT,
+  pageBreakFn?: (doc: jsPDF, y: number, needed: number) => number,
 ): number {
   const leading = fontSize * lineHeight;
   let curX = x;
   let curY = y;
+  const doPageBreak = pageBreakFn || checkPageBreak;
 
   for (const seg of segments) {
     const style = seg.bold ? 'bold' : 'normal';
@@ -134,7 +136,7 @@ function drawWrappedText(
       if (curX + wordWidth > x + maxWidth && curX > x) {
         curX = x;
         curY += leading;
-        curY = checkPageBreak(doc, curY, leading);
+        curY = doPageBreak(doc, curY, leading);
       }
 
       doc.text(word, curX, curY);
@@ -280,60 +282,96 @@ function renderSidebarPdf(
 
   sy += 6;
 
-  // Contact section
-  const contactItems: { label: string; value: string }[] = [];
-  if (personalInfo.email) contactItems.push({ label: 'EMAIL', value: personalInfo.email });
-  if (personalInfo.phone) contactItems.push({ label: 'PHONE', value: personalInfo.phone });
-  if (personalInfo.address) contactItems.push({ label: 'ADDRESS', value: personalInfo.address });
-  if (personalInfo.linkedin) contactItems.push({ label: 'LINKEDIN', value: personalInfo.linkedin });
-  if (personalInfo.website) contactItems.push({ label: 'WEBSITE', value: personalInfo.website });
+  // Contact section (icon + text on same line, no labels)
+  const contactValues: { icon: 'email' | 'phone' | 'address'; value: string }[] = [];
+  if (personalInfo.email) contactValues.push({ icon: 'email', value: personalInfo.email });
+  if (personalInfo.phone) contactValues.push({ icon: 'phone', value: personalInfo.phone });
+  if (personalInfo.address) contactValues.push({ icon: 'address', value: personalInfo.address });
 
-  if (contactItems.length > 0) {
+  if (contactValues.length > 0) {
     drawText(doc, 'CONTACT', SIDEBAR_LEFT, sy, 10, SIDEBAR_ACCENT, 'bold');
-    sy += 6;
+    sy += 8;
     doc.setDrawColor(...SIDEBAR_ACCENT);
     doc.setLineWidth(1.5);
     doc.line(SIDEBAR_LEFT, sy, SIDEBAR_LEFT + 30, sy);
-    sy += 8;
+    sy += 12;
 
-    for (const item of contactItems) {
-      drawText(doc, item.label, SIDEBAR_LEFT, sy, 7, [180, 180, 180]);
-      sy += 9;
-      sy = drawSidebarWrappedText(doc, item.value, SIDEBAR_LEFT, sy, SIDEBAR_TEXT_W, 8.5, [230, 230, 230]);
-      sy += 2;
+    const ICON_SIZE = 8;
+    const ICON_GAP = 8;
+    const TEXT_X = SIDEBAR_LEFT + ICON_SIZE + ICON_GAP;
+    const TEXT_W = SIDEBAR_TEXT_W - ICON_SIZE - ICON_GAP;
+
+    for (const item of contactValues) {
+      const iconCX = SIDEBAR_LEFT + ICON_SIZE / 2; // icon center X
+      const iconCY = sy - ICON_SIZE / 2 + 1;       // icon center Y
+
+      doc.setDrawColor(190, 190, 190);
+      doc.setLineWidth(0.7);
+
+      if (item.icon === 'email') {
+        // Envelope: rectangle + V flap
+        const ew = ICON_SIZE;
+        const eh = ICON_SIZE * 0.65;
+        const ex = SIDEBAR_LEFT;
+        const ey = iconCY - eh / 2;
+        doc.rect(ex, ey, ew, eh, 'S');
+        doc.line(ex, ey, ex + ew / 2, ey + eh * 0.55);
+        doc.line(ex + ew / 2, ey + eh * 0.55, ex + ew, ey);
+      } else if (item.icon === 'phone') {
+        // Phone: rectangle with rounded feel (handset outline)
+        const pw = ICON_SIZE * 0.55;
+        const ph = ICON_SIZE;
+        const px = iconCX - pw / 2;
+        const py = iconCY - ph / 2;
+        doc.roundedRect(px, py, pw, ph, 1.5, 1.5, 'S');
+        // Speaker line at top
+        doc.line(px + pw * 0.3, py + 1.5, px + pw * 0.7, py + 1.5);
+        // Home button dot at bottom
+        doc.circle(iconCX, py + ph - 2, 0.8, 'S');
+      } else if (item.icon === 'address') {
+        // Map pin: circle + triangle pointer
+        const pinR = 2.5;
+        doc.circle(iconCX, iconCY - 1, pinR, 'S');
+        // Small dot inside
+        doc.circle(iconCX, iconCY - 1, 0.8, 'F');
+        // Triangle point below
+        doc.line(iconCX - pinR * 0.6, iconCY + 1, iconCX, iconCY + pinR + 2);
+        doc.line(iconCX + pinR * 0.6, iconCY + 1, iconCX, iconCY + pinR + 2);
+      }
+
+      // Draw text on same line
+      sy = drawSidebarWrappedText(doc, item.value, TEXT_X, sy, TEXT_W, 8.5, [230, 230, 230]);
+      sy += 6;
     }
-    sy += 4;
+    sy += 8;
   }
 
   // Skills section
   if (skills.length > 0) {
-    drawText(doc, 'SKILLS', SIDEBAR_LEFT, sy, 10, SIDEBAR_ACCENT, 'bold');
     sy += 6;
+    drawText(doc, 'SKILLS', SIDEBAR_LEFT, sy, 10, SIDEBAR_ACCENT, 'bold');
+    sy += 8;
     doc.setDrawColor(...SIDEBAR_ACCENT);
     doc.setLineWidth(1.5);
     doc.line(SIDEBAR_LEFT, sy, SIDEBAR_LEFT + 30, sy);
-    sy += 8;
+    sy += 12;
 
     for (let i = 0; i < skills.length; i++) {
       const skill = skills[i];
       if (!skill.category.trim() && !skill.items.trim()) continue;
       if (i > 0) {
-        // subtle separator
-        doc.setDrawColor(60, 70, 85);
-        doc.setLineWidth(0.5);
-        doc.line(SIDEBAR_LEFT, sy, SIDEBAR_LEFT + SIDEBAR_TEXT_W, sy);
-        sy += 6;
+        sy += 4;
       }
       if (skill.category) {
         drawText(doc, skill.category, SIDEBAR_LEFT, sy, 9, WHITE, 'bold');
-        sy += 11;
+        sy += 12;
       }
       if (skill.items) {
         sy = drawSidebarWrappedText(doc, skill.items, SIDEBAR_LEFT, sy, SIDEBAR_TEXT_W, 8, [200, 200, 200]);
-        sy += 2;
+        sy += 4;
       }
     }
-    sy += 4;
+    sy += 6;
   }
 
   // Certifications
@@ -390,7 +428,7 @@ function renderSidebarPdf(
     drawMainSectionHeader('Summary');
     y = checkSidebarPageBreak(doc, y, 14);
     const summarySegments = parseHtmlBold(personalInfo.summary);
-    y = drawWrappedText(doc, summarySegments, MAIN_LEFT, y, MAIN_TEXT_W, FONT.body, colors.text);
+    y = drawWrappedText(doc, summarySegments, MAIN_LEFT, y, MAIN_TEXT_W, FONT.body, colors.text, LINE_HEIGHT, checkSidebarPageBreak);
     y += 6;
   }
 
@@ -431,7 +469,7 @@ function renderSidebarPdf(
       if (job.description) {
         y = checkSidebarPageBreak(doc, y, 14);
         const descSegments = parseHtmlBold(job.description);
-        y = drawWrappedText(doc, descSegments, MAIN_LEFT, y, MAIN_TEXT_W, FONT.body, colors.text);
+        y = drawWrappedText(doc, descSegments, MAIN_LEFT, y, MAIN_TEXT_W, FONT.body, colors.text, LINE_HEIGHT, checkSidebarPageBreak);
       }
 
       // Highlights
@@ -441,7 +479,7 @@ function renderSidebarPdf(
         y = checkSidebarPageBreak(doc, y, 14);
         const parsed = parseHtmlBold(highlight);
         drawText(doc, BULLET, MAIN_LEFT, y, FONT.body, colors.text);
-        y = drawWrappedText(doc, parsed, MAIN_LEFT + BULLET_INDENT, y, MAIN_TEXT_W - BULLET_INDENT, FONT.body, colors.text);
+        y = drawWrappedText(doc, parsed, MAIN_LEFT + BULLET_INDENT, y, MAIN_TEXT_W - BULLET_INDENT, FONT.body, colors.text, LINE_HEIGHT, checkSidebarPageBreak);
       }
       y += 4;
     }
@@ -481,7 +519,7 @@ function renderSidebarPdf(
 
       if (edu.description) {
         y = checkSidebarPageBreak(doc, y, 14);
-        y = drawWrappedText(doc, [{ text: edu.description, bold: false }], MAIN_LEFT, y, MAIN_TEXT_W, FONT.body, colors.text);
+        y = drawWrappedText(doc, [{ text: edu.description, bold: false }], MAIN_LEFT, y, MAIN_TEXT_W, FONT.body, colors.text, LINE_HEIGHT, checkSidebarPageBreak);
       }
 
       y += 4;
@@ -540,7 +578,6 @@ export async function exportToPdf(
   if (personalInfo.address) contactParts.push(personalInfo.address);
   if (personalInfo.email) contactParts.push(personalInfo.email);
   if (personalInfo.phone) contactParts.push(personalInfo.phone);
-  if (personalInfo.linkedin) contactParts.push(personalInfo.linkedin);
   if (personalInfo.website) contactParts.push(personalInfo.website);
 
   if (contactParts.length > 0) {

@@ -9,7 +9,9 @@
       "Bash(netstat:*)",
       "Bash(powershell:*)",
       "Bash(npx vite:*)",
-      "Bash(taskkill:*)"
+      "Bash(taskkill:*)",
+      "Bash(source .env:*)",
+      "Bash(curl:*)"
     ]
   }
 }
