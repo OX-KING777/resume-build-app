@@ -6,6 +6,9 @@ import type { ProfileName } from '@/services/aiService'
 const profiles = [
   { key: 'allen' as ProfileName, label: 'Allen Wang' },
   { key: 'albert' as ProfileName, label: 'Albert Kong' },
+  { key: 'tanner' as ProfileName, label: 'Tanner Barton' },
+  { key: 'hao' as ProfileName, label: 'Hao Nguyen' },
+  { key: 'chris' as ProfileName, label: 'Chris Yang' },
 ]
 
 export function TopBar() {

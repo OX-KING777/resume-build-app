@@ -271,7 +271,7 @@ const createAlbertEducation = (): Education[] => [
     id: createId(),
     institution: 'University of Illinois Urbana-Champaign',
     degree: 'Bachelor of Science',
-    field: 'Computer Engineering & Computer Science',
+    field: 'Computer Science',
     startDate: '2014',
     endDate: '2018',
     gpa: '',
@@ -312,6 +312,284 @@ const createAlbertSkills = (): Skill[] => [
   },
 ];
 
+// ─── TANNER BARTON DEFAULTS ─────────────────────────────────────────────────
+
+const tannerPersonalInfo: PersonalInfo = {
+  fullName: 'Tanner Barton',
+  email: 'tannerbarton011@gmail.com',
+  phone: '(929) 338-6310',
+  address: 'Austin, TX 78738',
+  linkedin: '',
+  website: '',
+  summary: '',
+};
+
+const createTannerWorkExperience = (): WorkExperience[] => [
+  {
+    id: createId(),
+    company: 'Google',
+    location: 'Austin, TX',
+    position: '',
+    startDate: 'May 2024',
+    endDate: '',
+    current: true,
+    description: '',
+    highlights: [],
+  },
+  {
+    id: createId(),
+    company: 'Amazon',
+    location: 'Seattle, WA',
+    position: '',
+    startDate: 'Aug 2020',
+    endDate: 'May 2024',
+    current: false,
+    description: '',
+    highlights: [],
+  },
+  {
+    id: createId(),
+    company: 'HackIllinois',
+    location: 'Champaign, IL',
+    position: '',
+    startDate: 'Jun 2018',
+    endDate: 'Aug 2020',
+    current: false,
+    description: '',
+    highlights: [],
+  },
+];
+
+const createTannerEducation = (): Education[] => [
+  {
+    id: createId(),
+    institution: 'Brigham Young University',
+    degree: 'Bachelor of Science',
+    field: 'Computer Science',
+    startDate: '2014',
+    endDate: '2018',
+    gpa: '',
+    description: '',
+  },
+];
+
+const createTannerSkills = (): Skill[] => [
+  {
+    id: createId(),
+    category: 'Languages',
+    items: 'Java, Go, Python, C++, TypeScript, JavaScript, SQL',
+  },
+  {
+    id: createId(),
+    category: 'Cloud & Infrastructure',
+    items: 'AWS, GCP, EC2, S3, Lambda, DynamoDB, Kubernetes, Docker, CloudFormation',
+  },
+  {
+    id: createId(),
+    category: 'Frontend & Web',
+    items: 'React, TypeScript, Angular, HTML, CSS, REST APIs, GraphQL',
+  },
+  {
+    id: createId(),
+    category: 'Backend & Data',
+    items: 'Node.js, gRPC, Kinesis, SQS, SNS, PostgreSQL, Redis, Kafka',
+  },
+  {
+    id: createId(),
+    category: 'Tools & Practices',
+    items: 'Git, CI/CD, CDK, Terraform, Agile/Scrum, Code Review, Testing',
+  },
+  {
+    id: createId(),
+    category: 'Systems & Architecture',
+    items: 'Distributed Systems, Microservices, System Design, Performance Optimization, Scalability',
+  },
+];
+
+// ─── HAO NGUYEN DEFAULTS ────────────────────────────────────────────────────
+
+const haoPersonalInfo: PersonalInfo = {
+  fullName: 'Hao Nguyen',
+  email: 'nyugenhao2206@gmail.com',
+  phone: '(929) 309-1284',
+  address: 'Forney, TX 75126',
+  linkedin: '',
+  website: '',
+  summary: '',
+};
+
+const createHaoWorkExperience = (): WorkExperience[] => [
+  {
+    id: createId(),
+    company: 'Fiserv',
+    location: 'Remote',
+    position: '',
+    startDate: 'Jan 2024',
+    endDate: '',
+    current: true,
+    description: '',
+    highlights: [],
+  },
+  {
+    id: createId(),
+    company: 'Aperia Solutions, Inc.',
+    location: 'Remote',
+    position: '',
+    startDate: 'Aug 2021',
+    endDate: 'Jan 2024',
+    current: false,
+    description: '',
+    highlights: [],
+  },
+  {
+    id: createId(),
+    company: 'Cognizant',
+    location: 'Dallas, TX',
+    position: '',
+    startDate: 'Apr 2017',
+    endDate: 'Aug 2021',
+    current: false,
+    description: '',
+    highlights: [],
+  },
+  {
+    id: createId(),
+    company: 'Tutor Doctor',
+    location: 'Dallas, TX',
+    position: '',
+    startDate: 'Feb 2016',
+    endDate: 'Mar 2017',
+    current: false,
+    description: '',
+    highlights: [],
+  },
+];
+
+const createHaoEducation = (): Education[] => [
+  {
+    id: createId(),
+    institution: 'Texas Tech University',
+    degree: 'Bachelor of Science',
+    field: 'Computer Science',
+    startDate: '2017',
+    endDate: '2019',
+    gpa: '',
+    description: '',
+  },
+  {
+    id: createId(),
+    institution: 'Lone Star College',
+    degree: 'Associate of Science',
+    field: 'Computer Science',
+    startDate: '2014',
+    endDate: '2017',
+    gpa: '',
+    description: '',
+  },
+];
+
+const createHaoSkills = (): Skill[] => [
+  {
+    id: createId(),
+    category: 'Languages',
+    items: 'Java, Python, JavaScript, TypeScript, C#, SQL',
+  },
+  {
+    id: createId(),
+    category: 'Cloud & Infrastructure',
+    items: 'AWS, Azure, Docker, Kubernetes, CI/CD, CloudFormation, Terraform',
+  },
+  {
+    id: createId(),
+    category: 'Frontend & Web',
+    items: 'React, Angular, HTML, CSS, REST APIs, GraphQL',
+  },
+  {
+    id: createId(),
+    category: 'Backend & Data',
+    items: 'Spring Boot, Node.js, .NET, Kafka, PostgreSQL, Oracle, SQL Server, Redis',
+  },
+  {
+    id: createId(),
+    category: 'Tools & Practices',
+    items: 'Git, JIRA, Agile/Scrum, Code Review, Unit Testing, Integration Testing',
+  },
+  {
+    id: createId(),
+    category: 'Domain & Architecture',
+    items: 'Microservices, Payment Processing, Financial Services, System Design, PCI Compliance',
+  },
+];
+
+// ─── CHRIS (SONGPEI) YANG DEFAULTS ─────────────────────────────────────────
+
+const chrisPersonalInfo: PersonalInfo = {
+  fullName: 'Chris (Songpei) Yang',
+  email: 'rt3537573@gmail.com',
+  phone: '(814) 313-3170',
+  address: 'Mckinney, TX 75071',
+  linkedin: '',
+  website: '',
+  summary: '',
+};
+
+const createChrisWorkExperience = (): WorkExperience[] => [
+  {
+    id: createId(),
+    company: 'ServiceNow',
+    location: 'Remote',
+    position: '',
+    startDate: 'Jan 2022',
+    endDate: '',
+    current: true,
+    description: '',
+    highlights: [],
+  },
+  {
+    id: createId(),
+    company: 'J.P. Morgan',
+    location: 'Remote',
+    position: '',
+    startDate: 'Sep 2021',
+    endDate: 'Jan 2022',
+    current: false,
+    description: '',
+    highlights: [],
+  },
+  {
+    id: createId(),
+    company: 'Bank of America',
+    location: 'Remote',
+    position: '',
+    startDate: 'Oct 2017',
+    endDate: 'Aug 2021',
+    current: false,
+    description: '',
+    highlights: [],
+  },
+];
+
+const createChrisEducation = (): Education[] => [
+  {
+    id: createId(),
+    institution: 'The University of Georgia',
+    degree: 'Bachelor of Science',
+    field: 'Computer Science',
+    startDate: '2013',
+    endDate: '2017',
+    gpa: '',
+    description: '',
+  },
+];
+
+const createChrisSkills = (): Skill[] => [
+  {
+    id: createId(),
+    category: '',
+    items: 'Java  •  JavaScript  •  TypeScript  •  Python  •  C#  •  SQL  •  Spring Boot  •  Node.js  •  .NET  •  React  •  Angular  •  REST APIs  •  GraphQL  •  ServiceNow Platform  •  Flow Designer  •  IntegrationHub  •  CMDB  •  ITSM  •  Glide API  •  AWS  •  Azure  •  Docker  •  Kubernetes  •  Kafka  •  Oracle  •  PostgreSQL  •  SQL Server  •  Redis  •  CI/CD  •  Jenkins  •  Terraform  •  Git  •  JIRA  •  Agile/Scrum',
+  },
+];
+
 // ─── PROFILE DEFAULTS ───────────────────────────────────────────────────────
 
 const getProfileDefaults = (profile: ProfileName) => {
@@ -322,6 +600,33 @@ const getProfileDefaults = (profile: ProfileName) => {
       education: createAlbertEducation(),
       certifications: [] as Certification[],
       skills: createAlbertSkills(),
+    };
+  }
+  if (profile === 'tanner') {
+    return {
+      personalInfo: { ...tannerPersonalInfo },
+      workExperience: createTannerWorkExperience(),
+      education: createTannerEducation(),
+      certifications: [] as Certification[],
+      skills: createTannerSkills(),
+    };
+  }
+  if (profile === 'hao') {
+    return {
+      personalInfo: { ...haoPersonalInfo },
+      workExperience: createHaoWorkExperience(),
+      education: createHaoEducation(),
+      certifications: [] as Certification[],
+      skills: createHaoSkills(),
+    };
+  }
+  if (profile === 'chris') {
+    return {
+      personalInfo: { ...chrisPersonalInfo },
+      workExperience: createChrisWorkExperience(),
+      education: createChrisEducation(),
+      certifications: [] as Certification[],
+      skills: createChrisSkills(),
     };
   }
   return {
@@ -336,6 +641,9 @@ const getProfileDefaults = (profile: ProfileName) => {
 const PROFILE_TEMPLATE: Record<ProfileName, TemplateName> = {
   allen: 'classic',
   albert: 'sidebar',
+  tanner: 'creative',
+  hao: 'modern',
+  chris: 'executive',
 };
 
 const getDefaultState = (profile: ProfileName = 'allen') => ({

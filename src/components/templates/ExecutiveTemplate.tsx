@@ -57,7 +57,6 @@ export function ExecutiveTemplate({
           {personalInfo.email && <span>{personalInfo.email}</span>}
           {personalInfo.phone && <span>{personalInfo.phone}</span>}
           {personalInfo.address && <span>{personalInfo.address}</span>}
-          {personalInfo.linkedin && <span>{personalInfo.linkedin}</span>}
           {personalInfo.website && <span>{personalInfo.website}</span>}
         </div>
       </div>
@@ -123,36 +122,12 @@ export function ExecutiveTemplate({
               className="mb-4"
               style={{ width: '40px', height: '1px', backgroundColor: goldColor }}
             />
-            <div className="space-y-1.5">
+            <p style={{ fontSize: '10.5px', color: '#5a5a5a', lineHeight: 1.6 }}>
               {skills
-                .filter((s) => s.category.trim() || s.items.trim())
-                .map((skill) => (
-                  <div
-                    key={skill.id}
-                    className="flex items-start gap-2"
-                    style={{
-                      fontSize: '10.5px',
-                      color: '#5a5a5a',
-                      paddingLeft: '14px',
-                    }}
-                  >
-                    <span
-                      className="shrink-0"
-                      style={{ color: goldColor, marginTop: '1px' }}
-                    >
-                      {'\u25C6'}
-                    </span>
-                    <span>
-                      {skill.category && (
-                        <span style={{ fontWeight: 700, color: '#2d2d2d' }}>
-                          {skill.category}:{' '}
-                        </span>
-                      )}
-                      {skill.items}
-                    </span>
-                  </div>
-                ))}
-            </div>
+                .filter((s) => s.items.trim())
+                .flatMap((s) => s.items.split(/,\s*/).map((i) => i.trim()).filter(Boolean))
+                .join('  \u2022  ')}
+            </p>
           </div>
         )}
 
@@ -180,10 +155,7 @@ export function ExecutiveTemplate({
               {workExperience.map((job) => (
                 <div
                   key={job.id}
-                  style={{
-                    paddingLeft: '14px',
-                    borderLeft: `2px solid #e0dcd5`,
-                  }}
+                  style={{}}
                 >
                   <div className="flex justify-between items-baseline">
                     <h3
@@ -272,10 +244,7 @@ export function ExecutiveTemplate({
               {education.map((edu) => (
                 <div
                   key={edu.id}
-                  style={{
-                    paddingLeft: '14px',
-                    borderLeft: `2px solid #e0dcd5`,
-                  }}
+                  style={{}}
                 >
                   <div className="flex justify-between items-baseline">
                     <h3
@@ -335,7 +304,7 @@ export function ExecutiveTemplate({
                 <div
                   key={cert.id}
                   className="flex justify-between items-baseline"
-                  style={{ paddingLeft: '14px', borderLeft: '2px solid #e0dcd5' }}
+                  style={{}}
                 >
                   <div>
                     <span style={{ fontSize: '11.5px', fontWeight: 700, color: '#2d2d2d' }}>

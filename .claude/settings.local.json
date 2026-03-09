@@ -11,7 +11,8 @@
       "Bash(npx vite:*)",
       "Bash(taskkill:*)",
       "Bash(source .env:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(grep:*)"
     ]
   }
 }
