@@ -927,7 +927,7 @@ function renderExecutivePdf(
   doc: jsPDF,
   data: PdfInput,
 ) {
-  const { personalInfo, workExperience, education, certifications, skills, mainTitle } = data;
+  const { personalInfo, workExperience, education, certifications, skills } = data;
   const CHARCOAL: [number, number, number] = [45, 45, 45];
   const GOLD: [number, number, number] = [184, 134, 11];
   const TEXT: [number, number, number] = [74, 74, 74];
