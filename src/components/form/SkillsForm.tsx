@@ -1,83 +1,61 @@
-import { Wrench, Plus } from 'lucide-react';
+import { Wrench } from 'lucide-react';
 import { useResumeStore } from '@/store/useResumeStore';
 import { FormSection } from '@/components/form/FormSection';
-import Input from '@/components/ui/Input';
 import TextArea from '@/components/ui/TextArea';
-import Button from '@/components/ui/Button';
-import type { Skill } from '@/types/resume';
-
-function SkillCard({ skill }: { skill: Skill }) {
-  const updateSkill = useResumeStore((state) => state.updateSkill);
-  const removeSkill = useResumeStore((state) => state.removeSkill);
-
-  const { id } = skill;
-
-  return (
-    <div className="rounded-lg border border-gray-200 bg-gray-50/50 p-4">
-      <div className="space-y-4">
-        <Input
-          label="Category"
-          placeholder="e.g. Frontend & Web"
-          value={skill.category}
-          onChange={(e) => updateSkill(id, { category: e.target.value })}
-        />
-
-        <TextArea
-          label="Items"
-          placeholder="e.g. React, HTML, CSS, JavaScript"
-          rows={2}
-          value={skill.items}
-          onChange={(e) => updateSkill(id, { items: e.target.value })}
-        />
-
-        <div className="flex justify-end border-t border-gray-200 pt-3">
-          <Button
-            type="button"
-            variant="danger"
-            size="sm"
-            onClick={() => removeSkill(id)}
-          >
-            Remove
-          </Button>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 export function SkillsForm() {
   const skills = useResumeStore((state) => state.skills);
+  const updateSkill = useResumeStore((state) => state.updateSkill);
   const addSkill = useResumeStore((state) => state.addSkill);
+
+  // Combine all skills into one text block: "Category: items" per line
+  const skillsText = skills
+    .map((s) => (s.category ? `${s.category}: ${s.items}` : s.items))
+    .join('\n');
+
+  const handleChange = (value: string) => {
+    const lines = value.split('\n');
+
+    // Remove all existing skills first, then rebuild
+    // We need to work with the store directly — clear and re-add
+    const store = useResumeStore.getState();
+
+    // Remove all existing
+    for (const s of store.skills) {
+      store.removeSkill(s.id);
+    }
+
+    // Add new ones from lines
+    for (const line of lines) {
+      store.addSkill();
+      const newSkills = useResumeStore.getState().skills;
+      const lastSkill = newSkills[newSkills.length - 1];
+
+      const colonIdx = line.indexOf(':');
+      if (colonIdx > 0) {
+        store.updateSkill(lastSkill.id, {
+          category: line.slice(0, colonIdx).trim(),
+          items: line.slice(colonIdx + 1).trim(),
+        });
+      } else {
+        store.updateSkill(lastSkill.id, { category: '', items: line });
+      }
+    }
+  };
 
   return (
     <FormSection
-      title="Skills Highlight"
+      title="Skills"
       icon={<Wrench className="h-5 w-5" />}
       defaultOpen={false}
     >
-      <div className="space-y-4">
-        <div className="flex justify-end">
-          <Button
-            type="button"
-            variant="secondary"
-            size="sm"
-            onClick={addSkill}
-          >
-            <Plus className="mr-1.5 h-4 w-4" />
-            Add Skill
-          </Button>
-        </div>
-
-        {skills.length === 0 && (
-          <p className="py-6 text-center text-sm text-gray-400">
-            No skills added yet. Click &quot;Add Skill&quot; to get started.
-          </p>
-        )}
-
-        {skills.map((skill) => (
-          <SkillCard key={skill.id} skill={skill} />
-        ))}
-      </div>
+      <TextArea
+        label="Skills (one category per line, e.g. 'Languages: Java, Python')"
+        rows={8}
+        placeholder={"Languages: Java, Python, TypeScript\nCloud: AWS, Docker, Kubernetes\nTools: Git, CI/CD, JIRA"}
+        value={skillsText}
+        onChange={(e) => handleChange(e.target.value)}
+      />
     </FormSection>
   );
 }

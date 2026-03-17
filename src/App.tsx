@@ -5,8 +5,7 @@ import { PersonalInfoForm } from '@/components/form/PersonalInfoForm'
 import { WorkExperienceForm } from '@/components/form/WorkExperienceForm'
 import { EducationForm } from '@/components/form/EducationForm'
 import { SkillsForm } from '@/components/form/SkillsForm'
-import { JobDescriptionForm } from '@/components/form/JobDescriptionForm'
-import { ResumePreview } from '@/components/preview/ResumePreview'
+import { PdfPreview } from '@/components/preview/PdfPreview'
 
 export default function App() {
   return (
@@ -16,16 +15,15 @@ export default function App() {
       <div className="flex flex-1 flex-col overflow-hidden pt-16 lg:flex-row">
         <LeftPanel>
           <div className="space-y-4">
-            <JobDescriptionForm />
             <PersonalInfoForm />
-            <SkillsForm />
             <WorkExperienceForm />
+            <SkillsForm />
             <EducationForm />
           </div>
         </LeftPanel>
 
         <RightPanel>
-          <ResumePreview />
+          <PdfPreview />
         </RightPanel>
       </div>
     </div>

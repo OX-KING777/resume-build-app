@@ -1,14 +1,18 @@
 import { FileText } from 'lucide-react'
 import { useResumeStore } from '@/store/useResumeStore'
-import ExportMenu from '@/components/export/ExportMenu'
-import type { ProfileName } from '@/services/aiService'
+import type { ProfileName } from '@/types/resume'
 
-const profiles = [
-  { key: 'allen' as ProfileName, label: 'Allen Wang' },
-  { key: 'albert' as ProfileName, label: 'Albert Kong' },
-  { key: 'tanner' as ProfileName, label: 'Tanner Barton' },
-  { key: 'hao' as ProfileName, label: 'Hao Nguyen' },
-  { key: 'chris' as ProfileName, label: 'Chris Yang' },
+const profiles: { key: ProfileName; label: string }[] = [
+  { key: 'allen', label: 'Allen Wang' },
+  { key: 'chris', label: 'Chris Yang' },
+  { key: 'henry', label: 'Henry Yang' },
+  { key: 'alex', label: 'Alex Lin' },
+  { key: 'saurav', label: 'Saurav Kumar' },
+  { key: 'chrislin', label: 'Chris Lin' },
+  { key: 'david', label: 'David Palomino' },
+  { key: 'beka', label: 'Beka Latsabidze' },
+  { key: 'tanner', label: 'Tanner Barton' },
+  { key: 'hao', label: 'Hao Nguyen' },
 ]
 
 export function TopBar() {
@@ -33,10 +37,6 @@ export function TopBar() {
             </option>
           ))}
         </select>
-      </div>
-
-      <div>
-        <ExportMenu />
       </div>
     </header>
   )

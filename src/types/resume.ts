@@ -45,7 +45,9 @@ export interface Skill {
   items: string;
 }
 
-export type TemplateName = 'classic' | 'modern' | 'minimal' | 'creative' | 'executive' | 'sidebar';
+export type TemplateName = 'classic' | 'executive' | 'sidebar' | 'minimal' | 'professional' | 'elegant' | 'bold' | 'accent' | 'creative' | 'modern';
+
+export type ProfileName = 'allen' | 'chris' | 'henry' | 'alex' | 'saurav' | 'chrislin' | 'david' | 'beka' | 'tanner' | 'hao';
 
 export interface ResumeData {
   personalInfo: PersonalInfo;
@@ -53,44 +55,5 @@ export interface ResumeData {
   education: Education[];
   certifications: Certification[];
   skills: Skill[];
-  jobDescription: string;
   selectedTemplate: TemplateName;
-}
-
-export interface AiSuggestions {
-  summary?: string;
-  workExperience?: Array<{
-    id: string;
-    description?: string;
-    highlights?: string[];
-  }>;
-  skills?: string[];
-}
-
-export interface AiWarning {
-  type: 'clearance' | 'onsite';
-  message: string;
-}
-
-export interface GeneratedResume {
-  title: string;
-  summary: string;
-  skills: Array<{ category: string; items: string }>;
-  workExperience: Array<{
-    company: string;
-    location: string;
-    position: string;
-    startDate: string;
-    endDate: string;
-    current: boolean;
-    highlights: string[];
-  }>;
-  education: Array<{
-    institution: string;
-    degree: string;
-    field: string;
-    startDate: string;
-    endDate: string;
-  }>;
-  warnings: AiWarning[];
 }

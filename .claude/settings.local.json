@@ -12,7 +12,8 @@
       "Bash(taskkill:*)",
       "Bash(source .env:*)",
       "Bash(curl:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(npm uninstall:*)"
     ]
   }
 }
