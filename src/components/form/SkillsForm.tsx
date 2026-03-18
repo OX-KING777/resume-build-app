@@ -5,8 +5,6 @@ import TextArea from '@/components/ui/TextArea';
 
 export function SkillsForm() {
   const skills = useResumeStore((state) => state.skills);
-  const updateSkill = useResumeStore((state) => state.updateSkill);
-  const addSkill = useResumeStore((state) => state.addSkill);
 
   // Combine all skills into one text block: "Category: items" per line
   const skillsText = skills

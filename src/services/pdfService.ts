@@ -202,8 +202,6 @@ function addPageNumbers(doc: jsPDF, color: [number, number, number]) {
 
 // ===== Sidebar (Henry) — All-black, two-column header layout =====
 
-const WHITE: [number, number, number] = [255, 255, 255];
-
 function renderSidebarPdf(
   doc: jsPDF,
   data: PdfInput,
