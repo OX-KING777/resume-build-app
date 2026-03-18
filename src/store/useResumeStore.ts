@@ -157,22 +157,24 @@ const createAlexSkills = (): Skill[] => [];
 const sauravPersonalInfo: PersonalInfo = {
   fullName: 'Saurav Kumar',
   title: '',
-  email: 'sauravkumar@gmail.com',
-  phone: '(929) 555-0256',
-  address: 'Chicago, IL 60601',
-  linkedin: '',
+  email: 'kumarsaurav0991@gmail.com',
+  phone: '(610) 244-1557',
+  address: 'Houston, TX 77042',
+  linkedin: 'https://www.linkedin.com/in/sauravkantkumar/',
   website: '',
   summary: '',
 };
 
 const createSauravWorkExperience = (): WorkExperience[] => [
-  { id: createId(), company: 'Salesforce', location: 'Chicago, IL', position: '', startDate: 'Apr 2023', endDate: '', current: true, description: '', highlights: [] },
-  { id: createId(), company: 'Deloitte', location: 'Chicago, IL', position: '', startDate: 'Jul 2020', endDate: 'Apr 2023', current: false, description: '', highlights: [] },
-  { id: createId(), company: 'Accenture', location: 'Chicago, IL', position: '', startDate: 'Jan 2018', endDate: 'Jul 2020', current: false, description: '', highlights: [] },
+  { id: createId(), company: 'NVIDIA', location: 'Remote', position: '', startDate: 'Mar 2024', endDate: '', current: true, description: '', highlights: [] },
+  { id: createId(), company: 'McKesson', location: 'Irving, TX', position: '', startDate: 'Jan 2021', endDate: 'Feb 2024', current: false, description: '', highlights: [] },
+  { id: createId(), company: 'Microsoft', location: 'Bengaluru, India', position: '', startDate: 'Dec 2018', endDate: 'Dec 2020', current: false, description: '', highlights: [] },
+  { id: createId(), company: 'Infosys', location: 'Bengaluru, India', position: '', startDate: 'Feb 2015', endDate: 'Oct 2018', current: false, description: '', highlights: [] },
 ];
 
 const createSauravEducation = (): Education[] => [
-  { id: createId(), institution: 'University of Illinois at Chicago', degree: 'Bachelor of Science', field: 'Computer Science', startDate: '2014', endDate: '2018', gpa: '', description: '' },
+  { id: createId(), institution: 'Illinois Institute of Technology', degree: "Master's Degree", field: 'Artificial Intelligence', startDate: 'Jan 2021', endDate: 'Dec 2022', gpa: '', description: '' },
+  { id: createId(), institution: 'Assam University', degree: 'Bachelor of Technology', field: 'Information Technology', startDate: 'Mar 2010', endDate: 'Jul 2014', gpa: '', description: '' },
 ];
 
 const createSauravSkills = (): Skill[] => [];
@@ -506,7 +508,7 @@ export const useResumeStore = create<ResumeState>()(
       },
     }),
     {
-      name: 'resume-builder-storage-v13',
+      name: 'resume-builder-storage-v15',
       partialize: (state) => ({
         selectedProfile: state.selectedProfile,
         personalInfo: state.personalInfo,

@@ -221,10 +221,10 @@ function renderSidebarPdf(
   doc.text(personalInfo.fullName || 'Your Name', MARGIN_LEFT, y + 14);
   y += 20;
 
-  // ---- Title (below name, italic) ----
+  // ---- Title (below name, bold) ----
   if (personalInfo.title) {
-    doc.setFont('helvetica', 'italic');
-    doc.setFontSize(11);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(13);
     doc.setTextColor(...BLK);
     doc.text(personalInfo.title, MARGIN_LEFT, y);
     y += 14;
@@ -408,7 +408,7 @@ function renderCreativePdf(doc: jsPDF, data: PdfInput) {
   y += 14;
 
   if (personalInfo.title) {
-    drawText(doc, personalInfo.title, MARGIN_LEFT, y, FONT.title, CREATIVE_ACCENT);
+    drawText(doc, personalInfo.title, MARGIN_LEFT, y, 13, CREATIVE_ACCENT, 'bold');
     y += FONT.title + 4;
   }
 
@@ -560,11 +560,11 @@ function renderModernPdf(doc: jsPDF, data: PdfInput) {
   let y = MARGIN_TOP;
 
   drawText(doc, personalInfo.fullName || 'Your Name', MARGIN_LEFT, y, 20, BLACK, 'bold');
-  y += 14;
+  y += 18;
 
   if (personalInfo.title) {
-    drawText(doc, personalInfo.title, MARGIN_LEFT, y, FONT.title, GRAY);
-    y += FONT.title + 4;
+    drawText(doc, personalInfo.title, MARGIN_LEFT, y, 13, GRAY, 'bold');
+    y += 13 + 4;
   }
 
   const contactParts: string[] = [];
@@ -728,12 +728,12 @@ function renderExecutivePdf(doc: jsPDF, data: PdfInput) {
 
   // Title
   if (personalInfo.title) {
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(10);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(13);
     doc.setTextColor(...BLK);
     const titleW = doc.getTextWidth(personalInfo.title);
     doc.text(personalInfo.title, (PAGE_W - titleW) / 2, y);
-    y += FONT.title + 6;
+    y += 13 + 6;
   }
 
   // Contact — centered, pipe-separated
@@ -895,8 +895,8 @@ function renderProfessionalPdf(doc: jsPDF, data: PdfInput) {
   doc.text(nameText, (PAGE_W - nameW) / 2, 36);
 
   if (personalInfo.title) {
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(10);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(13);
     doc.setTextColor(200, 200, 200);
     const titleW = doc.getTextWidth(personalInfo.title);
     doc.text(personalInfo.title, (PAGE_W - titleW) / 2, 48);
@@ -1030,12 +1030,12 @@ function renderElegantPdf(doc: jsPDF, data: PdfInput) {
   y += 16;
 
   if (personalInfo.title) {
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(FONT.title);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(13);
     doc.setTextColor(...BURG);
     const titleW = doc.getTextWidth(personalInfo.title);
     doc.text(personalInfo.title, (PAGE_W - titleW) / 2, y);
-    y += FONT.title + 6;
+    y += 13 + 6;
   }
 
   // Contact centered
@@ -1043,6 +1043,7 @@ function renderElegantPdf(doc: jsPDF, data: PdfInput) {
   if (personalInfo.email) contactParts.push(personalInfo.email);
   if (personalInfo.phone) contactParts.push(personalInfo.phone);
   if (personalInfo.address) contactParts.push(personalInfo.address);
+  if (personalInfo.linkedin) contactParts.push(personalInfo.linkedin);
 
   if (contactParts.length > 0) {
     const contactStr = contactParts.join('  \u2022  ');
@@ -1183,8 +1184,8 @@ function renderBoldPdf(doc: jsPDF, data: PdfInput) {
   doc.text(personalInfo.fullName || 'Your Name', MARGIN_LEFT, 40);
 
   if (personalInfo.title) {
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(11);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(13);
     doc.setTextColor(200, 200, 200);
     doc.text(personalInfo.title, MARGIN_LEFT, 52);
   }
@@ -1315,7 +1316,7 @@ function renderAccentPdf(doc: jsPDF, data: PdfInput) {
   y += 14;
 
   if (personalInfo.title) {
-    drawText(doc, personalInfo.title, leftOffset, y, FONT.title, CORAL);
+    drawText(doc, personalInfo.title, leftOffset, y, 13, CORAL, 'bold');
     y += FONT.title + 4;
   }
 
@@ -1435,8 +1436,8 @@ function renderMinimalPdf(doc: jsPDF, data: PdfInput) {
   y += 16;
 
   if (personalInfo.title) {
-    drawText(doc, personalInfo.title, MARGIN_LEFT, y, FONT.title, BLK);
-    y += FONT.title + 4;
+    drawText(doc, personalInfo.title, MARGIN_LEFT, y, 13, BLK, 'bold');
+    y += 13 + 4;
   }
 
   // Contact
@@ -1560,9 +1561,9 @@ function renderCleanPdf(doc: jsPDF, data: PdfInput) {
   doc.text(nameText, (PAGE_W - nameW) / 2, y);
   y += 18;
 
-  // ---- Title (centered, normal) ----
+  // ---- Title (centered, bold) ----
   if (personalInfo.title) {
-    doc.setFont('helvetica', 'normal');
+    doc.setFont('helvetica', 'bold');
     doc.setFontSize(14);
     doc.setTextColor(...BLK);
     const titleW = doc.getTextWidth(personalInfo.title);
@@ -1736,7 +1737,7 @@ function renderImpactPdf(doc: jsPDF, data: PdfInput) {
   // ---- Title ----
   if (personalInfo.title) {
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(11);
+    doc.setFontSize(13);
     doc.setTextColor(...BLK);
     doc.text(personalInfo.title, MARGIN_LEFT, y);
     y += 14;
@@ -1940,8 +1941,8 @@ function createPdfDoc(data: PdfInput): jsPDF {
       y += FONT.name + 6;
 
       if (personalInfo.title) {
-        drawText(doc, personalInfo.title, MARGIN_LEFT, y, FONT.title, colors.text, 'bold');
-        y += FONT.title + 4;
+        drawText(doc, personalInfo.title, MARGIN_LEFT, y, 13, colors.text, 'bold');
+        y += 13 + 4;
       }
 
       const contactParts: string[] = [];
