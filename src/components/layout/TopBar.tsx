@@ -13,6 +13,8 @@ const profiles: { key: ProfileName; label: string }[] = [
   { key: 'beka', label: 'Beka Latsabidze' },
   { key: 'tanner', label: 'Tanner Barton' },
   { key: 'hao', label: 'Hao Nguyen' },
+  { key: 'peter', label: 'Peter Addo' },
+  { key: 'albert', label: 'Albert Kong' },
 ]
 
 export function TopBar() {

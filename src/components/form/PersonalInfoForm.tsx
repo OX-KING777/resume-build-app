@@ -49,6 +49,13 @@ export function PersonalInfoForm() {
           />
         </div>
 
+        <Input
+          label="Title"
+          placeholder="e.g. Senior Software Engineer"
+          value={personalInfo.title}
+          onChange={(e) => updatePersonalInfo({ title: e.target.value })}
+        />
+
         <TextArea
           label="Professional Summary"
           rows={4}

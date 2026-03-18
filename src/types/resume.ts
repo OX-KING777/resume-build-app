@@ -1,5 +1,6 @@
 export interface PersonalInfo {
   fullName: string;
+  title: string;
   email: string;
   phone: string;
   address: string;
@@ -45,9 +46,9 @@ export interface Skill {
   items: string;
 }
 
-export type TemplateName = 'classic' | 'executive' | 'sidebar' | 'minimal' | 'professional' | 'elegant' | 'bold' | 'accent' | 'creative' | 'modern';
+export type TemplateName = 'classic' | 'executive' | 'sidebar' | 'minimal' | 'professional' | 'elegant' | 'bold' | 'accent' | 'creative' | 'modern' | 'clean' | 'impact';
 
-export type ProfileName = 'allen' | 'chris' | 'henry' | 'alex' | 'saurav' | 'chrislin' | 'david' | 'beka' | 'tanner' | 'hao';
+export type ProfileName = 'allen' | 'chris' | 'henry' | 'alex' | 'saurav' | 'chrislin' | 'david' | 'beka' | 'tanner' | 'hao' | 'peter' | 'albert';
 
 export interface ResumeData {
   personalInfo: PersonalInfo;
