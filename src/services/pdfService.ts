@@ -1726,13 +1726,13 @@ function renderImpactPdf(doc: jsPDF, data: PdfInput) {
   doc.setFontSize(28);
   doc.setTextColor(...BLK);
   doc.text(personalInfo.fullName || 'Your Name', MARGIN_LEFT, y);
-  y += 6;
+  y += 10;
 
   // Thick underline below name
   doc.setDrawColor(...BLK);
   doc.setLineWidth(2.5);
   doc.line(MARGIN_LEFT, y, RIGHT_EDGE, y);
-  y += 12;
+  y += 18;
 
   // ---- Title ----
   if (personalInfo.title) {
@@ -1850,6 +1850,7 @@ function renderImpactPdf(doc: jsPDF, data: PdfInput) {
 
     for (const edu of education) {
       y = checkPageBreak(doc, y, 28);
+      y += 4;
 
       drawText(doc, edu.institution, MARGIN_LEFT, y, FONT.companyName, BLK, 'bold');
       const eduDateStr = edu.startDate || edu.endDate ? `${edu.startDate}${edu.endDate ? ' - ' + edu.endDate : ''}` : '';

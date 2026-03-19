@@ -146,7 +146,7 @@ const createAlexWorkExperience = (): WorkExperience[] => [
 ];
 
 const createAlexEducation = (): Education[] => [
-  { id: createId(), institution: 'Northeastern University', degree: "Master's Degree", field: 'Computer Science', startDate: 'Jan 2016', endDate: 'Dec 2017', gpa: '', description: '' },
+  { id: createId(), institution: 'Northeastern University', degree: "Master's Degree", field: 'Computer Science', startDate: '2016', endDate: '2017', gpa: '', description: '' },
   { id: createId(), institution: 'Dalian Jiaotong University', degree: "Bachelor's Degree", field: 'Computer Science', startDate: '2010', endDate: '2015', gpa: '', description: '' },
 ];
 
@@ -343,21 +343,22 @@ const albertPersonalInfo: PersonalInfo = {
   title: '',
   email: 'albertkong211@gmail.com',
   phone: '(929) 309-1138',
-  address: 'Austin, TX, 78701',
+  address: 'Austin, TX 78701',
   linkedin: '',
   website: '',
   summary: '',
 };
 
 const createAlbertWorkExperience = (): WorkExperience[] => [
-  { id: createId(), company: 'Google', location: '', position: '', startDate: 'May 2024', endDate: '', current: true, description: '', highlights: [] },
-  { id: createId(), company: 'Ladder', location: '', position: '', startDate: 'Aug 2022', endDate: 'May 2024', current: false, description: '', highlights: [] },
-  { id: createId(), company: 'Roblox', location: '', position: '', startDate: 'Aug 2019', endDate: 'Aug 2022', current: false, description: '', highlights: [] },
-  { id: createId(), company: 'HackIllinois', location: '', position: '', startDate: 'Jul 2018', endDate: 'Aug 2019', current: false, description: '', highlights: [] },
+  { id: createId(), company: 'Capgemini', location: 'Remote', position: '', startDate: 'Apr 2024', endDate: '', current: true, description: '', highlights: [] },
+  { id: createId(), company: 'Cognizant', location: 'Remote', position: '', startDate: 'May 2022', endDate: 'Mar 2024', current: false, description: '', highlights: [] },
+  { id: createId(), company: 'AWS', location: 'Austin, TX', position: '', startDate: 'Sep 2021', endDate: 'Mar 2022', current: false, description: '', highlights: [] },
+  { id: createId(), company: 'HackIllinois', location: 'Urbana, IL', position: '', startDate: 'Aug 2018', endDate: 'Sep 2021', current: false, description: '', highlights: [] },
 ];
 
 const createAlbertEducation = (): Education[] => [
-  { id: createId(), institution: 'University of Illinois Urbana-Champaign', degree: 'Bachelor of Science', field: 'Computer Engineering, Computer Science', startDate: '2014', endDate: '2018', gpa: '', description: '' },
+  { id: createId(), institution: 'University of Illinois Urbana-Champaign', degree: "Bachelor's of Science", field: 'Computer Engineering', startDate: '2018', endDate: '2021', gpa: '', description: '' },
+  { id: createId(), institution: 'Wuhan University', degree: "Bachelor's Degree", field: 'Information Science', startDate: '2014', endDate: '2018', gpa: '', description: '' },
 ];
 
 const createAlbertSkills = (): Skill[] => [];
