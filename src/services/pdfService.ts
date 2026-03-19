@@ -219,15 +219,15 @@ function renderSidebarPdf(
   doc.setFontSize(26);
   doc.setTextColor(...BLK);
   doc.text(personalInfo.fullName || 'Your Name', MARGIN_LEFT, y + 14);
-  y += 20;
+  y += 38;
 
-  // ---- Title (below name, bold) ----
+  // ---- Title (below name) ----
   if (personalInfo.title) {
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(13);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(18);
     doc.setTextColor(...BLK);
     doc.text(personalInfo.title, MARGIN_LEFT, y);
-    y += 14;
+    y += 16;
   }
 
   // ---- Contact (each on own line, right-aligned, stacked) ----
