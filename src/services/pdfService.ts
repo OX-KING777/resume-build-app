@@ -272,6 +272,26 @@ function renderSidebarPdf(
     y += 6;
   }
 
+  // ---- Skills ----
+  if (skills.length > 0 && skills.some(s => s.category.trim() || s.items.trim())) {
+    drawSectionHeader('Skills');
+
+    for (const skill of skills) {
+      if (!skill.category.trim() && !skill.items.trim()) continue;
+      y = checkPageBreak(doc, y, 14);
+      const segments: TextSegment[] = [];
+      if (skill.category) {
+        segments.push({ text: skill.category + ': ', bold: true });
+      }
+      if (skill.items) {
+        segments.push({ text: skill.items, bold: false });
+      }
+      y = drawWrappedText(doc, segments, MARGIN_LEFT, y, CONTENT_W, FONT.body, BLK, LINE_HEIGHT, checkPageBreak);
+      y += 2;
+    }
+    y += 4;
+  }
+
   // ---- Experience ----
   if (workExperience.length > 0) {
     drawSectionHeader('Professional Experience');
@@ -321,26 +341,6 @@ function renderSidebarPdf(
       }
       y += 4;
     }
-  }
-
-  // ---- Skills ----
-  if (skills.length > 0 && skills.some(s => s.category.trim() || s.items.trim())) {
-    drawSectionHeader('Skills');
-
-    for (const skill of skills) {
-      if (!skill.category.trim() && !skill.items.trim()) continue;
-      y = checkPageBreak(doc, y, 14);
-      const segments: TextSegment[] = [];
-      if (skill.category) {
-        segments.push({ text: skill.category + ': ', bold: true });
-      }
-      if (skill.items) {
-        segments.push({ text: skill.items, bold: false });
-      }
-      y = drawWrappedText(doc, segments, MARGIN_LEFT, y, CONTENT_W, FONT.body, BLK, LINE_HEIGHT, checkPageBreak);
-      y += 2;
-    }
-    y += 4;
   }
 
   // ---- Education ----
