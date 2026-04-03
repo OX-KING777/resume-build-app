@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Download, Loader2 } from 'lucide-react';
+import { Download, FolderArchive, Loader2 } from 'lucide-react';
+import JSZip from 'jszip';
 import { useResumeStore } from '@/store/useResumeStore';
 import { generatePdfBlob, exportToPdf } from '@/services/pdfService';
 import type { PdfInput } from '@/services/pdfService';
@@ -11,6 +12,8 @@ export function PdfPreview() {
   const certifications = useResumeStore((s) => s.certifications);
   const skills = useResumeStore((s) => s.skills);
   const selectedTemplate = useResumeStore((s) => s.selectedTemplate);
+  const selectedProfile = useResumeStore((s) => s.selectedProfile);
+  const companyName = useResumeStore((s) => s.companyName);
 
   const [blobUrl, setBlobUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -73,16 +76,57 @@ export function PdfPreview() {
     exportToPdf(input, fileName);
   };
 
+  const handleDownloadZip = async () => {
+    const input: PdfInput = {
+      personalInfo,
+      workExperience,
+      education,
+      certifications,
+      skills,
+      selectedTemplate,
+    };
+    const pdfBlob = generatePdfBlob(input);
+    const pdfFileName = `${personalInfo.fullName} - Resume.pdf`;
+    const company = companyName.trim().replace(/\s+/g, '_');
+    const zipFileName = `${personalInfo.fullName.replace(/\s+/g, '_')}_Resume_${company}.zip`;
+
+    const zip = new JSZip();
+    zip.file(pdfFileName, pdfBlob);
+    const zipBlob = await zip.generateAsync({ type: 'blob' });
+
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(zipBlob);
+    link.download = zipFileName;
+    link.click();
+    URL.revokeObjectURL(link.href);
+  };
+
+  const hasJsonImport = ['allen', 'albert', 'david'].includes(selectedProfile);
+  const hasCompany = companyName.trim().length > 0;
+
   return (
     <div className="relative h-full w-full max-w-[850px]">
-      {/* Download button overlay */}
-      <button
-        onClick={handleDownload}
-        className="absolute top-3 right-3 z-10 flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-lg transition-colors hover:bg-blue-700"
-      >
-        <Download className="h-4 w-4" />
-        Download PDF
-      </button>
+      {/* Download buttons overlay */}
+      <div className="absolute top-3 right-3 z-10 flex gap-2">
+        {hasJsonImport && (
+          <button
+            onClick={handleDownloadZip}
+            disabled={!hasCompany}
+            className="flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-lg transition-colors hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
+            title={hasCompany ? `Download as ZIP for ${companyName}` : 'Enter a Company Name first'}
+          >
+            <FolderArchive className="h-4 w-4" />
+            Download ZIP
+          </button>
+        )}
+        <button
+          onClick={handleDownload}
+          className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-lg transition-colors hover:bg-blue-700"
+        >
+          <Download className="h-4 w-4" />
+          Download PDF
+        </button>
+      </div>
 
       {/* Loading spinner */}
       {loading && !blobUrl && (

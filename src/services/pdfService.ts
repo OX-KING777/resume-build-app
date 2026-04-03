@@ -2007,7 +2007,11 @@ function createPdfDoc(data: PdfInput): jsPDF {
       if (workExperience.length > 0) {
         drawSectionHeader('Professional Experience');
         for (const job of workExperience) {
-          y = checkPageBreak(doc, y, 40);
+          // Estimate height for company header + position line + at least first bullet
+          const headerHeight = 2 + (FONT.companyName + 4) + (FONT.position + 6);
+          const firstBulletHeight = FONT.body * LINE_HEIGHT * 2; // assume 2 lines for first bullet
+          const minBlockHeight = headerHeight + firstBulletHeight;
+          y = checkPageBreak(doc, y, minBlockHeight);
           y += 2;
           drawText(doc, job.company, MARGIN_LEFT, y, FONT.companyName, colors.primary, 'bold');
           if (job.location) drawTextRight(doc, job.location, y, FONT.dateText, colors.text);
@@ -2023,7 +2027,12 @@ function createPdfDoc(data: PdfInput): jsPDF {
           for (const highlight of job.highlights) {
             const clean = stripHtml(highlight).trim();
             if (!clean) continue;
-            y = checkPageBreak(doc, y, 14);
+            // Estimate wrapped height for this bullet
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(FONT.body);
+            const bulletLines = doc.splitTextToSize(clean, CONTENT_W - BULLET_INDENT);
+            const bulletHeight = bulletLines.length * FONT.body * LINE_HEIGHT;
+            y = checkPageBreak(doc, y, bulletHeight);
             drawText(doc, BULLET, MARGIN_LEFT, y, FONT.body, colors.text);
             y = drawWrappedText(doc, parseHtmlBold(highlight), MARGIN_LEFT + BULLET_INDENT, y, CONTENT_W - BULLET_INDENT, FONT.body, colors.text);
           }
@@ -2032,9 +2041,19 @@ function createPdfDoc(data: PdfInput): jsPDF {
       }
 
       if (education.length > 0) {
+        // Estimate total education section height to keep it together
+        let eduHeight = 18; // section header
+        for (const edu of education) {
+          eduHeight += (FONT.companyName + 4); // institution line
+          if (edu.degree || edu.field) eduHeight += (FONT.body + 4);
+          if (edu.gpa) eduHeight += (FONT.body + 4);
+          if (edu.description) eduHeight += (FONT.body * LINE_HEIGHT + 4);
+          eduHeight += 4; // spacing
+        }
+        y = checkPageBreak(doc, y, eduHeight);
+
         drawSectionHeader('Education');
         for (const edu of education) {
-          y = checkPageBreak(doc, y, 28);
           drawText(doc, edu.institution, MARGIN_LEFT, y, FONT.companyName, colors.text, 'bold');
           const eduDateStr = edu.startDate || edu.endDate ? `${edu.startDate}${edu.endDate ? ' - ' + edu.endDate : ''}` : '';
           if (eduDateStr) drawTextRight(doc, eduDateStr, y, FONT.dateText, colors.text, 'bold');

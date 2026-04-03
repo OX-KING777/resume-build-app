@@ -18,6 +18,7 @@ interface ResumeState {
   certifications: Certification[];
   skills: Skill[];
   selectedTemplate: TemplateName;
+  companyName: string;
 
   setProfile: (profile: ProfileName) => void;
   updatePersonalInfo: (info: Partial<PersonalInfo>) => void;
@@ -34,7 +35,9 @@ interface ResumeState {
   updateSkill: (id: string, data: Partial<Skill>) => void;
   removeSkill: (id: string) => void;
   setTemplate: (template: TemplateName) => void;
+  setCompanyName: (name: string) => void;
   resetToDefaults: () => void;
+  importFromJson: (jsonStr: string) => void;
 }
 
 const createId = () => crypto.randomUUID();
@@ -53,10 +56,10 @@ const allenPersonalInfo: PersonalInfo = {
 };
 
 const createAllenWorkExperience = (): WorkExperience[] => [
-  { id: createId(), company: 'Intuit', location: 'Remote', position: '', startDate: '2024-08', endDate: '', current: true, description: '', highlights: [] },
-  { id: createId(), company: 'Intuit', location: 'Remote', position: '', startDate: '2022-08', endDate: '2024-08', current: false, description: '', highlights: [] },
-  { id: createId(), company: 'Tai Software', location: 'Huntington Beach, CA', position: '', startDate: '2018-06', endDate: '2022-08', current: false, description: '', highlights: [] },
-  { id: createId(), company: 'Tai Software', location: 'Huntington Beach, CA', position: '', startDate: '2016-06', endDate: '2018-06', current: false, description: '', highlights: [] },
+  { id: createId(), company: 'Intuit', location: 'Remote', position: '', startDate: 'Aug 2024', endDate: '', current: true, description: '', highlights: [] },
+  { id: createId(), company: 'Intuit', location: 'Remote', position: '', startDate: 'Aug 2022', endDate: 'Aug 2024', current: false, description: '', highlights: [] },
+  { id: createId(), company: 'Tai Software', location: 'Huntington Beach, CA', position: '', startDate: 'Jun 2018', endDate: 'Aug 2022', current: false, description: '', highlights: [] },
+  { id: createId(), company: 'Tai Software', location: 'Huntington Beach, CA', position: '', startDate: 'Jun 2016', endDate: 'Jun 2018', current: false, description: '', highlights: [] },
 ];
 
 const createAllenEducation = (): Education[] => [
@@ -65,8 +68,8 @@ const createAllenEducation = (): Education[] => [
     institution: 'UC Irvine',
     degree: "Bachelor's Degree",
     field: 'Computer Science',
-    startDate: '2012',
-    endDate: '2016',
+    startDate: '2014',
+    endDate: '2018',
     gpa: '',
     description: '',
   },
@@ -413,6 +416,7 @@ const getDefaultState = (profile: ProfileName = 'allen') => ({
   selectedProfile: profile,
   ...getProfileDefaults(profile),
   selectedTemplate: PROFILE_TEMPLATE[profile],
+  companyName: '',
 });
 
 export const useResumeStore = create<ResumeState>()(
@@ -503,13 +507,72 @@ export const useResumeStore = create<ResumeState>()(
 
       setTemplate: (template) => set({ selectedTemplate: template }),
 
+      setCompanyName: (name) => set({ companyName: name }),
+
       resetToDefaults: () => {
         const profile = get().selectedProfile;
         set(getDefaultState(profile));
       },
+
+      importFromJson: (jsonStr: string) => {
+        const data = JSON.parse(jsonStr);
+        const state = get();
+
+        // Update Title & Summary
+        if (data.Title || data.Summary) {
+          set((s) => ({
+            personalInfo: {
+              ...s.personalInfo,
+              ...(data.Title !== undefined && { title: data.Title }),
+              ...(data.Summary !== undefined && { summary: data.Summary }),
+            },
+          }));
+        }
+
+        // Update Technical Skills
+        if (data['Technical Skills']) {
+          // Remove all existing skills
+          for (const s of state.skills) {
+            state.removeSkill(s.id);
+          }
+          // Add new ones from JSON
+          const techSkills = data['Technical Skills'];
+          for (const [category, items] of Object.entries(techSkills)) {
+            const store = useResumeStore.getState();
+            store.addSkill();
+            const newSkills = useResumeStore.getState().skills;
+            const lastSkill = newSkills[newSkills.length - 1];
+            store.updateSkill(lastSkill.id, {
+              category,
+              items: Array.isArray(items) ? (items as string[]).join(', ') : String(items),
+            });
+          }
+        }
+
+        // Update Experience — match by company order (Company 1, Company 2, etc.)
+        if (data.Experience) {
+          const currentWork = useResumeStore.getState().workExperience;
+          const experienceEntries = Object.keys(data.Experience)
+            .sort() // Company 1, Company 2, Company 3, Company 4
+            .map((key) => data.Experience[key]);
+
+          for (let i = 0; i < Math.min(experienceEntries.length, currentWork.length); i++) {
+            const entry = experienceEntries[i];
+            const updates: Partial<WorkExperience> = {};
+            if (entry['Role Title']) updates.position = entry['Role Title'];
+            if (entry['Experience Content']) {
+              updates.highlights = Array.isArray(entry['Experience Content'])
+                ? entry['Experience Content']
+                : [entry['Experience Content']];
+            }
+            useResumeStore.getState().updateWorkExperience(currentWork[i].id, updates);
+          }
+        }
+
+      },
     }),
     {
-      name: 'resume-builder-storage-v15',
+      name: 'resume-builder-storage-v16',
       partialize: (state) => ({
         selectedProfile: state.selectedProfile,
         personalInfo: state.personalInfo,
@@ -518,6 +581,7 @@ export const useResumeStore = create<ResumeState>()(
         certifications: state.certifications,
         skills: state.skills,
         selectedTemplate: state.selectedTemplate,
+        companyName: state.companyName,
       }),
     }
   )
