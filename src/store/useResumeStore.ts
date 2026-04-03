@@ -19,6 +19,7 @@ interface ResumeState {
   skills: Skill[];
   selectedTemplate: TemplateName;
   companyName: string;
+  coverLetterText: string;
 
   setProfile: (profile: ProfileName) => void;
   updatePersonalInfo: (info: Partial<PersonalInfo>) => void;
@@ -36,6 +37,7 @@ interface ResumeState {
   removeSkill: (id: string) => void;
   setTemplate: (template: TemplateName) => void;
   setCompanyName: (name: string) => void;
+  setCoverLetterText: (text: string) => void;
   resetToDefaults: () => void;
   importFromJson: (jsonStr: string) => void;
 }
@@ -417,6 +419,7 @@ const getDefaultState = (profile: ProfileName = 'allen') => ({
   ...getProfileDefaults(profile),
   selectedTemplate: PROFILE_TEMPLATE[profile],
   companyName: '',
+  coverLetterText: '',
 });
 
 export const useResumeStore = create<ResumeState>()(
@@ -509,6 +512,8 @@ export const useResumeStore = create<ResumeState>()(
 
       setCompanyName: (name) => set({ companyName: name }),
 
+      setCoverLetterText: (text) => set({ coverLetterText: text }),
+
       resetToDefaults: () => {
         const profile = get().selectedProfile;
         set(getDefaultState(profile));
@@ -582,6 +587,7 @@ export const useResumeStore = create<ResumeState>()(
         skills: state.skills,
         selectedTemplate: state.selectedTemplate,
         companyName: state.companyName,
+        coverLetterText: state.coverLetterText,
       }),
     }
   )

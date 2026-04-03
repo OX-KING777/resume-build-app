@@ -6,6 +6,7 @@ import { WorkExperienceForm } from '@/components/form/WorkExperienceForm'
 import { EducationForm } from '@/components/form/EducationForm'
 import { SkillsForm } from '@/components/form/SkillsForm'
 import { JsonImportForm } from '@/components/form/JsonImportForm'
+import { CoverLetterForm } from '@/components/form/CoverLetterForm'
 import { PdfPreview } from '@/components/preview/PdfPreview'
 
 export default function App() {
@@ -21,6 +22,7 @@ export default function App() {
             <WorkExperienceForm />
             <SkillsForm />
             <EducationForm />
+            <CoverLetterForm />
           </div>
         </LeftPanel>
 
