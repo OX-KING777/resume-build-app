@@ -101,7 +101,7 @@ export function PdfPreview() {
     URL.revokeObjectURL(link.href);
   };
 
-  const hasJsonImport = ['allen', 'albert', 'david', 'hao', 'peter'].includes(selectedProfile);
+  const hasJsonImport = ['allen', 'albert', 'david', 'hao', 'peter', 'chris', 'henry', 'alex', 'saurav', 'chrislin', 'beka', 'tanner'].includes(selectedProfile);
   const hasCompany = companyName.trim().length > 0;
 
   return (
