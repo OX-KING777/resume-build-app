@@ -31,6 +31,7 @@ const COLORS: Record<TemplateName, { primary: [number, number, number]; text: [n
   accent: { primary: [231, 76, 60], text: [44, 62, 80], muted: [107, 114, 128] },
   clean: { primary: [0, 0, 0], text: [0, 0, 0], muted: [0, 0, 0] },
   impact: { primary: [0, 0, 0], text: [0, 0, 0], muted: [0, 0, 0] },
+  warmth: { primary: [220, 120, 50], text: [51, 51, 51], muted: [107, 114, 128] },
 };
 
 // Page constants (in points, 72pt = 1 inch)
@@ -1872,6 +1873,130 @@ function renderImpactPdf(doc: jsPDF, data: PdfInput) {
   }
 }
 
+// ===== Warmth (Thomas) — Orange accents, clean layout, right-aligned contact =====
+
+function renderWarmthPdf(doc: jsPDF, data: PdfInput) {
+  const { personalInfo, workExperience, education, skills } = data;
+  const ORANGE: [number, number, number] = [220, 120, 50];
+  const DARK_TEXT: [number, number, number] = [51, 51, 51];
+  const GRAY: [number, number, number] = [107, 114, 128];
+
+  let y = MARGIN_TOP;
+
+  // Name — large orange
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(26);
+  doc.setTextColor(...ORANGE);
+  doc.text(personalInfo.fullName || 'Your Name', MARGIN_LEFT, y);
+
+  // Contact — right-aligned on same line as name
+  const contactLine: string[] = [];
+  if (personalInfo.email) contactLine.push(personalInfo.email);
+  if (personalInfo.phone) contactLine.push(personalInfo.phone);
+  if (contactLine.length > 0) {
+    const contactStr = contactLine.join('  \u00B7  ');
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9.5);
+    doc.setTextColor(...DARK_TEXT);
+    const cw = doc.getTextWidth(contactStr);
+    doc.text(contactStr, RIGHT_EDGE - cw, y - 10);
+  }
+  if (personalInfo.address) {
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9.5);
+    doc.setTextColor(...DARK_TEXT);
+    const aw = doc.getTextWidth(personalInfo.address);
+    doc.text(personalInfo.address, RIGHT_EDGE - aw, y);
+  }
+  y += 20;
+
+  // Summary
+  if (personalInfo.summary) {
+    y = checkPageBreak(doc, y, 14);
+    y = drawWrappedText(doc, parseHtmlBold(personalInfo.summary), MARGIN_LEFT, y, CONTENT_W, FONT.body, DARK_TEXT);
+    y += 6;
+  }
+
+  // Section header helper
+  function drawWarmthSectionHeader(title: string) {
+    y = checkPageBreak(doc, y, 28);
+    y += 8;
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(14);
+    doc.setTextColor(...ORANGE);
+    doc.text(title, MARGIN_LEFT, y);
+    y += 14;
+  }
+
+  // Technical Skills
+  if (skills.length > 0) {
+    drawWarmthSectionHeader('Technical Skills');
+    for (const skill of skills) {
+      if (!skill.category.trim() && !skill.items.trim()) continue;
+      y = checkPageBreak(doc, y, 14);
+      const segments: TextSegment[] = [];
+      if (skill.category) segments.push({ text: `${skill.category}: `, bold: true });
+      segments.push({ text: skill.items, bold: false });
+      y = drawWrappedText(doc, segments, MARGIN_LEFT, y, CONTENT_W, FONT.body, DARK_TEXT);
+    }
+    y += 4;
+  }
+
+  // Career Experience
+  if (workExperience.length > 0) {
+    drawWarmthSectionHeader('Career Experience');
+    const BULLET = '\u2022   ';
+    const BULLET_INDENT = 16;
+
+    for (const job of workExperience) {
+      y = checkPageBreak(doc, y, 40);
+      y += 2;
+
+      // Company name in orange + date right-aligned
+      drawText(doc, job.company, MARGIN_LEFT, y, FONT.companyName, ORANGE, 'bold');
+      const dateStr = job.startDate ? `${job.startDate} \u2014 ${job.current ? 'Present' : job.endDate}` : '';
+      if (dateStr) {
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(FONT.dateText);
+        doc.setTextColor(...DARK_TEXT);
+        const dw = doc.getTextWidth(dateStr);
+        doc.text(dateStr, RIGHT_EDGE - dw, y);
+      }
+      y += 13;
+
+      // Position title
+      if (job.position) {
+        drawText(doc, job.position, MARGIN_LEFT, y, FONT.position, DARK_TEXT, 'bold');
+        y += 13;
+      }
+
+      // Highlights
+      for (const highlight of job.highlights) {
+        const clean = stripHtml(highlight).trim();
+        if (!clean) continue;
+        y = checkPageBreak(doc, y, 14);
+        drawText(doc, BULLET, MARGIN_LEFT, y, FONT.body, DARK_TEXT);
+        y = drawWrappedText(doc, parseHtmlBold(highlight), MARGIN_LEFT + BULLET_INDENT, y, CONTENT_W - BULLET_INDENT, FONT.body, DARK_TEXT);
+      }
+      y += 6;
+    }
+  }
+
+  // Education
+  if (education.length > 0) {
+    drawWarmthSectionHeader('Education');
+    for (const edu of education) {
+      y = checkPageBreak(doc, y, 28);
+      const degreeField = `${edu.degree}${edu.field ? ', ' + edu.field : ''}`;
+      drawText(doc, degreeField, MARGIN_LEFT, y, FONT.companyName, DARK_TEXT, 'bold');
+      y += FONT.companyName + 4;
+      const eduLine = edu.institution + (edu.startDate || edu.endDate ? `, ${edu.startDate}${edu.endDate ? ' - ' + edu.endDate : ''}` : '');
+      drawText(doc, eduLine, MARGIN_LEFT, y, FONT.body, GRAY);
+      y += FONT.body + 8;
+    }
+  }
+}
+
 // ===== Main rendering dispatcher =====
 
 function createPdfDoc(data: PdfInput): jsPDF {
@@ -1928,6 +2053,10 @@ function createPdfDoc(data: PdfInput): jsPDF {
     case 'impact':
       renderImpactPdf(doc, data);
       addPageNumbers(doc, [0, 0, 0]);
+      return doc;
+    case 'warmth':
+      renderWarmthPdf(doc, data);
+      addPageNumbers(doc, colors.muted);
       return doc;
     default: {
       // Classic template (green top bar)

@@ -33,7 +33,7 @@ export function JsonImportForm() {
   const [jsonText, setJsonText] = useState('');
   const [status, setStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
-  const JSON_IMPORT_PROFILES = ['allen', 'albert', 'david', 'hao', 'peter', 'chris', 'henry', 'alex', 'saurav', 'chrislin', 'beka', 'tanner'];
+  const JSON_IMPORT_PROFILES = ['allen', 'albert', 'david', 'hao', 'peter', 'chris', 'henry', 'alex', 'saurav', 'chrislin', 'beka', 'tanner', 'thomas'];
   if (!JSON_IMPORT_PROFILES.includes(selectedProfile)) return null;
 
   const handleImport = () => {

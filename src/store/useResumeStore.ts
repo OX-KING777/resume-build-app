@@ -368,6 +368,32 @@ const createAlbertEducation = (): Education[] => [
 
 const createAlbertSkills = (): Skill[] => [];
 
+// ─── THOMAS J PATREY DEFAULTS ────────────────────────────────────────────
+
+const thomasPersonalInfo: PersonalInfo = {
+  fullName: 'Thomas J Patrey',
+  title: '',
+  email: 'thomasjpatrey@gmail.com',
+  phone: '6102441567',
+  address: 'Pearland, TX 77581, United States',
+  linkedin: '',
+  website: '',
+  summary: '',
+};
+
+const createThomasWorkExperience = (): WorkExperience[] => [
+  { id: createId(), company: 'Capgemini', location: '', position: '', startDate: 'Sep 2024', endDate: '', current: true, description: '', highlights: [] },
+  { id: createId(), company: 'Rula', location: '', position: '', startDate: 'Jan 2023', endDate: 'Jun 2024', current: false, description: '', highlights: [] },
+  { id: createId(), company: 'Digital River', location: '', position: '', startDate: 'Jan 2020', endDate: 'Nov 2022', current: false, description: '', highlights: [] },
+  { id: createId(), company: 'Edmodo', location: '', position: '', startDate: 'Apr 2017', endDate: 'Dec 2019', current: false, description: '', highlights: [] },
+];
+
+const createThomasEducation = (): Education[] => [
+  { id: createId(), institution: 'Argosy University', degree: 'B.S.', field: 'Computer Science', startDate: 'Sep 2012', endDate: 'May 2016', gpa: '', description: '' },
+];
+
+const createThomasSkills = (): Skill[] => [];
+
 // ─── PROFILE DEFAULTS ─────────────────────────────────────────────────────
 
 const PROFILE_TEMPLATE: Record<ProfileName, TemplateName> = {
@@ -383,6 +409,7 @@ const PROFILE_TEMPLATE: Record<ProfileName, TemplateName> = {
   hao: 'modern',
   peter: 'clean',
   albert: 'impact',
+  thomas: 'warmth',
 };
 
 const getProfileDefaults = (profile: ProfileName) => {
@@ -411,6 +438,8 @@ const getProfileDefaults = (profile: ProfileName) => {
       return { personalInfo: { ...peterPersonalInfo }, workExperience: createPeterWorkExperience(), education: createPeterEducation(), certifications: [] as Certification[], skills: createPeterSkills() };
     case 'albert':
       return { personalInfo: { ...albertPersonalInfo }, workExperience: createAlbertWorkExperience(), education: createAlbertEducation(), certifications: [] as Certification[], skills: createAlbertSkills() };
+    case 'thomas':
+      return { personalInfo: { ...thomasPersonalInfo }, workExperience: createThomasWorkExperience(), education: createThomasEducation(), certifications: [] as Certification[], skills: createThomasSkills() };
   }
 };
 
