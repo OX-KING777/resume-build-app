@@ -32,6 +32,7 @@ const COLORS: Record<TemplateName, { primary: [number, number, number]; text: [n
   clean: { primary: [0, 0, 0], text: [0, 0, 0], muted: [0, 0, 0] },
   impact: { primary: [0, 0, 0], text: [0, 0, 0], muted: [0, 0, 0] },
   warmth: { primary: [220, 120, 50], text: [51, 51, 51], muted: [107, 114, 128] },
+  corporate: { primary: [31, 78, 140], text: [51, 51, 51], muted: [107, 114, 128] },
 };
 
 // Page constants (in points, 72pt = 1 inch)
@@ -1997,6 +1998,123 @@ function renderWarmthPdf(doc: jsPDF, data: PdfInput) {
   }
 }
 
+// ===== Corporate (David Wu) — Blue-accent single column =====
+
+function renderCorporatePdf(doc: jsPDF, data: PdfInput) {
+  const { personalInfo, workExperience, education, skills } = data;
+  const BLUE: [number, number, number] = [31, 78, 140];
+  const DARK_TEXT: [number, number, number] = [51, 51, 51];
+  const GRAY: [number, number, number] = [107, 114, 128];
+
+  let y = MARGIN_TOP;
+
+  // Name — large blue
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(24);
+  doc.setTextColor(...BLUE);
+  doc.text(personalInfo.fullName || 'Your Name', MARGIN_LEFT, y + 10);
+  y += 22;
+
+  // Blue underline under name
+  doc.setDrawColor(...BLUE);
+  doc.setLineWidth(1);
+  doc.line(MARGIN_LEFT, y, RIGHT_EDGE, y);
+  y += 12;
+
+  // Contact line: title | address | email | phone
+  const contactParts: string[] = [];
+  if (personalInfo.title) contactParts.push(personalInfo.title);
+  if (personalInfo.address) contactParts.push(personalInfo.address);
+  if (personalInfo.email) contactParts.push(personalInfo.email);
+  if (personalInfo.phone) contactParts.push(personalInfo.phone);
+  if (contactParts.length > 0) {
+    drawText(doc, contactParts.join(' | '), MARGIN_LEFT, y, FONT.contact, DARK_TEXT);
+    y += FONT.contact + 6;
+  }
+
+  function drawCorporateSectionHeader(title: string) {
+    y = checkPageBreak(doc, y, 28);
+    y += 8;
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(13);
+    doc.setTextColor(...BLUE);
+    doc.text(title, MARGIN_LEFT, y);
+    y += 4;
+    doc.setDrawColor(...BLUE);
+    doc.setLineWidth(0.5);
+    doc.line(MARGIN_LEFT, y, RIGHT_EDGE, y);
+    y += 10;
+  }
+
+  // Summary
+  if (personalInfo.summary) {
+    drawCorporateSectionHeader('Summary');
+    y = drawWrappedText(doc, parseHtmlBold(personalInfo.summary), MARGIN_LEFT, y, CONTENT_W, FONT.body, DARK_TEXT);
+    y += 4;
+  }
+
+  // Skills
+  if (skills.length > 0 && skills.some(s => s.category.trim() || s.items.trim())) {
+    drawCorporateSectionHeader('Skills');
+    for (const skill of skills) {
+      if (!skill.category.trim() && !skill.items.trim()) continue;
+      y = checkPageBreak(doc, y, 14);
+      const segments: TextSegment[] = [];
+      if (skill.category) segments.push({ text: `${skill.category}: `, bold: true });
+      if (skill.items) segments.push({ text: skill.items, bold: false });
+      y = drawWrappedText(doc, segments, MARGIN_LEFT, y, CONTENT_W, FONT.body, DARK_TEXT);
+    }
+    y += 4;
+  }
+
+  // Professional Experience
+  if (workExperience.length > 0) {
+    drawCorporateSectionHeader('Professional Experience');
+    const BULLET = '\u2022   ';
+    const BULLET_INDENT = 16;
+
+    for (const job of workExperience) {
+      y = checkPageBreak(doc, y, 40);
+      y += 2;
+
+      // Company – Position (blue)
+      const header = job.position ? `${job.company} \u2013 ${job.position}` : job.company;
+      drawText(doc, header, MARGIN_LEFT, y, FONT.companyName, BLUE, 'bold');
+      y += 13;
+
+      // Dates (bold dark)
+      const dateStr = job.startDate ? `${job.startDate} \u2013 ${job.current ? 'Present' : job.endDate}` : '';
+      if (dateStr) {
+        drawText(doc, dateStr, MARGIN_LEFT, y, FONT.dateText, DARK_TEXT, 'bold');
+        y += 13;
+      }
+      y += 2;
+
+      for (const highlight of job.highlights) {
+        const clean = stripHtml(highlight).trim();
+        if (!clean) continue;
+        y = checkPageBreak(doc, y, 14);
+        drawText(doc, BULLET, MARGIN_LEFT, y, FONT.body, DARK_TEXT);
+        y = drawWrappedText(doc, parseHtmlBold(highlight), MARGIN_LEFT + BULLET_INDENT, y, CONTENT_W - BULLET_INDENT, FONT.body, DARK_TEXT);
+      }
+      y += 6;
+    }
+  }
+
+  // Education
+  if (education.length > 0) {
+    drawCorporateSectionHeader('Education');
+    for (const edu of education) {
+      y = checkPageBreak(doc, y, 28);
+      drawText(doc, edu.institution, MARGIN_LEFT, y, FONT.companyName, DARK_TEXT, 'bold');
+      y += 13;
+      const degreeField = `${edu.degree}${edu.field ? ' \u2013 ' + edu.field : ''}${edu.startDate || edu.endDate ? '  \u00B7  ' + edu.startDate + (edu.endDate ? ' \u2013 ' + edu.endDate : '') : ''}`;
+      drawText(doc, degreeField, MARGIN_LEFT, y, FONT.body, GRAY);
+      y += FONT.body + 6;
+    }
+  }
+}
+
 // ===== Main rendering dispatcher =====
 
 function createPdfDoc(data: PdfInput): jsPDF {
@@ -2056,6 +2174,10 @@ function createPdfDoc(data: PdfInput): jsPDF {
       return doc;
     case 'warmth':
       renderWarmthPdf(doc, data);
+      addPageNumbers(doc, colors.muted);
+      return doc;
+    case 'corporate':
+      renderCorporatePdf(doc, data);
       addPageNumbers(doc, colors.muted);
       return doc;
     default: {

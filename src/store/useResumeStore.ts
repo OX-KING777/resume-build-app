@@ -394,6 +394,31 @@ const createThomasEducation = (): Education[] => [
 
 const createThomasSkills = (): Skill[] => [];
 
+// ─── DAVID WU DEFAULTS ───────────────────────────────────────────────────
+
+const davidwuPersonalInfo: PersonalInfo = {
+  fullName: 'David Wu',
+  title: '',
+  email: 'david.yuchia.wu@gmail.com',
+  phone: '(929) 377-2312',
+  address: 'Austin, TX',
+  linkedin: '',
+  website: '',
+  summary: '',
+};
+
+const createDavidwuWorkExperience = (): WorkExperience[] => [
+  { id: createId(), company: 'Crunchbase', location: '', position: 'Senior Software Engineer', startDate: 'Jul 2022', endDate: '', current: true, description: '', highlights: [] },
+  { id: createId(), company: 'RetailMeNot', location: '', position: 'Software Engineer II', startDate: 'Jun 2018', endDate: 'Jul 2022', current: false, description: '', highlights: [] },
+  { id: createId(), company: 'National Instruments', location: '', position: 'Full Stack Engineer', startDate: 'Jul 2016', endDate: 'Jun 2018', current: false, description: '', highlights: [] },
+];
+
+const createDavidwuEducation = (): Education[] => [
+  { id: createId(), institution: 'The University of Texas at Austin', degree: 'Master of Science', field: 'Electrical and Computer Engineering', startDate: '2014', endDate: '2016', gpa: '', description: '' },
+];
+
+const createDavidwuSkills = (): Skill[] => [];
+
 // ─── PROFILE DEFAULTS ─────────────────────────────────────────────────────
 
 const PROFILE_TEMPLATE: Record<ProfileName, TemplateName> = {
@@ -410,6 +435,7 @@ const PROFILE_TEMPLATE: Record<ProfileName, TemplateName> = {
   peter: 'clean',
   albert: 'impact',
   thomas: 'warmth',
+  davidwu: 'corporate',
 };
 
 const getProfileDefaults = (profile: ProfileName) => {
@@ -440,6 +466,8 @@ const getProfileDefaults = (profile: ProfileName) => {
       return { personalInfo: { ...albertPersonalInfo }, workExperience: createAlbertWorkExperience(), education: createAlbertEducation(), certifications: [] as Certification[], skills: createAlbertSkills() };
     case 'thomas':
       return { personalInfo: { ...thomasPersonalInfo }, workExperience: createThomasWorkExperience(), education: createThomasEducation(), certifications: [] as Certification[], skills: createThomasSkills() };
+    case 'davidwu':
+      return { personalInfo: { ...davidwuPersonalInfo }, workExperience: createDavidwuWorkExperience(), education: createDavidwuEducation(), certifications: [] as Certification[], skills: createDavidwuSkills() };
   }
 };
 
@@ -606,7 +634,7 @@ export const useResumeStore = create<ResumeState>()(
       },
     }),
     {
-      name: 'resume-builder-storage-v16',
+      name: 'resume-builder-storage-v17',
       partialize: (state) => ({
         selectedProfile: state.selectedProfile,
         personalInfo: state.personalInfo,
