@@ -67,10 +67,10 @@ interface TextSegment {
   bold: boolean;
 }
 
-/** Parse <b>...</b> tags into segments */
+/** Parse <b>...</b> tags or **...** markdown into bold segments */
 function parseHtmlBold(text: string): TextSegment[] {
   const segments: TextSegment[] = [];
-  const regex = /<b>(.*?)<\/b>/gi;
+  const regex = /<b>(.*?)<\/b>|\*\*(.+?)\*\*/gi;
   let lastIndex = 0;
   let match: RegExpExecArray | null;
 
@@ -78,7 +78,8 @@ function parseHtmlBold(text: string): TextSegment[] {
     if (match.index > lastIndex) {
       segments.push({ text: text.slice(lastIndex, match.index), bold: false });
     }
-    segments.push({ text: match[1], bold: true });
+    const boldText = match[1] !== undefined ? match[1] : match[2];
+    segments.push({ text: boldText, bold: true });
     lastIndex = regex.lastIndex;
   }
 
