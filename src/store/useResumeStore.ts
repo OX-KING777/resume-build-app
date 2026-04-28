@@ -419,6 +419,35 @@ const createDavidwuEducation = (): Education[] => [
 
 const createDavidwuSkills = (): Skill[] => [];
 
+// ─── DEGAO CHEN DEFAULTS ─────────────────────────────────────────────────
+
+const degaoPersonalInfo: PersonalInfo = {
+  fullName: 'Degao Chen',
+  title: '',
+  email: 'degao.chen27@gmail.com',
+  phone: '(610) 244-1830',
+  address: 'San Francisco',
+  linkedin: '',
+  website: '',
+  summary: '',
+};
+
+const createDegaoWorkExperience = (): WorkExperience[] => [
+  { id: createId(), company: 'Lyft', location: 'San Francisco', position: '', startDate: 'Mar 2024', endDate: '', current: true, description: '', highlights: [] },
+  { id: createId(), company: 'The Walt Disney Company', location: 'Burbank, California', position: '', startDate: 'Dec 2023', endDate: 'Feb 2024', current: false, description: '', highlights: [] },
+  { id: createId(), company: 'Wish', location: 'San Francisco', position: '', startDate: 'Jan 2022', endDate: 'Oct 2023', current: false, description: '', highlights: [] },
+  { id: createId(), company: 'Invesco Ltd.', location: 'San Francisco', position: '', startDate: 'Jan 2020', endDate: 'Jan 2022', current: false, description: '', highlights: [] },
+  { id: createId(), company: 'Wells Fargo', location: 'San Francisco', position: '', startDate: 'Feb 2016', endDate: 'Jan 2020', current: false, description: '', highlights: [] },
+  { id: createId(), company: 'CCS Global Tech', location: 'San Diego, California', position: '', startDate: 'Jul 2015', endDate: 'Feb 2016', current: false, description: '', highlights: [] },
+];
+
+const createDegaoEducation = (): Education[] => [
+  { id: createId(), institution: 'University of California, Riverside', degree: 'Master of Business Administration - MBA', field: 'Management Information Systems, General', startDate: '2013', endDate: '2015', gpa: '', description: '' },
+  { id: createId(), institution: 'Sun Yat-sen University', degree: "Bachelor's degree", field: 'Information Management and Information System', startDate: '2009', endDate: '2013', gpa: '', description: '' },
+];
+
+const createDegaoSkills = (): Skill[] => [];
+
 // ─── PROFILE DEFAULTS ─────────────────────────────────────────────────────
 
 const PROFILE_TEMPLATE: Record<ProfileName, TemplateName> = {
@@ -436,6 +465,7 @@ const PROFILE_TEMPLATE: Record<ProfileName, TemplateName> = {
   albert: 'impact',
   thomas: 'warmth',
   davidwu: 'corporate',
+  degao: 'impact',
 };
 
 const getProfileDefaults = (profile: ProfileName) => {
@@ -468,6 +498,8 @@ const getProfileDefaults = (profile: ProfileName) => {
       return { personalInfo: { ...thomasPersonalInfo }, workExperience: createThomasWorkExperience(), education: createThomasEducation(), certifications: [] as Certification[], skills: createThomasSkills() };
     case 'davidwu':
       return { personalInfo: { ...davidwuPersonalInfo }, workExperience: createDavidwuWorkExperience(), education: createDavidwuEducation(), certifications: [] as Certification[], skills: createDavidwuSkills() };
+    case 'degao':
+      return { personalInfo: { ...degaoPersonalInfo }, workExperience: createDegaoWorkExperience(), education: createDegaoEducation(), certifications: [] as Certification[], skills: createDegaoSkills() };
   }
 };
 

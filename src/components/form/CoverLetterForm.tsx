@@ -10,7 +10,7 @@ export function CoverLetterForm() {
   const coverLetterText = useResumeStore((s) => s.coverLetterText);
   const setCoverLetterText = useResumeStore((s) => s.setCoverLetterText);
 
-  const COVER_LETTER_PROFILES = ['allen', 'albert', 'david', 'hao', 'peter', 'chris', 'henry', 'alex', 'saurav', 'chrislin', 'beka', 'tanner', 'thomas', 'davidwu'];
+  const COVER_LETTER_PROFILES = ['allen', 'albert', 'david', 'hao', 'peter', 'chris', 'henry', 'alex', 'saurav', 'chrislin', 'beka', 'tanner', 'thomas', 'davidwu', 'degao'];
   if (!COVER_LETTER_PROFILES.includes(selectedProfile)) return null;
 
   const handleDownload = () => {
