@@ -35,43 +35,38 @@ export function generateCoverLetterBlob(
   phone: string,
   address: string,
   text: string,
-  jobTitle?: string,
-  website?: string,
 ): Blob {
   const doc = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'letter' });
   const body = normalizeCoverLetterText(text);
 
   let y = MARGIN_TOP;
 
-  // ---- Job title header (small, gray) ----
-  if (jobTitle && jobTitle.trim()) {
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(9);
-    doc.setTextColor(...GREY);
-    doc.text(jobTitle.toUpperCase(), MARGIN_LEFT, y);
-    y += 14;
-  }
-
   // ---- Name header ----
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(28);
+  doc.setFontSize(22);
   doc.setTextColor(...BLK);
   const displayName = fullName.trim() || 'Applicant';
   doc.text(displayName, MARGIN_LEFT, y);
-  y += 10;
+  y += 8;
 
-  // ---- Contact info with labels ----
+  // Thin line under name
+  doc.setDrawColor(...BLK);
+  doc.setLineWidth(1.5);
+  doc.line(MARGIN_LEFT, y, PAGE_W - MARGIN_RIGHT, y);
+  y += 14;
+
+  // ---- Contact info ----
   const contactParts: string[] = [];
-  if (phone) contactParts.push(`T: ${phone}`);
-  if (website) contactParts.push(`W: ${website}`);
-  if (email) contactParts.push(`E: ${email}`);
+  if (email) contactParts.push(email);
+  if (phone) contactParts.push(phone);
+  if (address) contactParts.push(address);
 
   if (contactParts.length > 0) {
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(9);
-    doc.setTextColor(...BLK);
-    doc.text(contactParts.join('  //  '), MARGIN_LEFT, y);
-    y += 20;
+    doc.setTextColor(...GREY);
+    doc.text(contactParts.join('  |  '), MARGIN_LEFT, y);
+    y += 24;
   }
 
   // ---- Body text ----
@@ -125,10 +120,8 @@ export async function downloadCoverLetterPdf(
   phone: string,
   address: string,
   text: string,
-  jobTitle?: string,
-  website?: string,
 ): Promise<void> {
-  const blob = generateCoverLetterBlob(fullName, email, phone, address, text, jobTitle, website);
+  const blob = generateCoverLetterBlob(fullName, email, phone, address, text);
   const safeName = (fullName.trim() || 'Cover_Letter').replace(/[/\\?%*:|"<>]/g, '_');
   const suggestedName = `${safeName} - Cover Letter.pdf`;
   await savePdfBlob(blob, suggestedName, () => {
