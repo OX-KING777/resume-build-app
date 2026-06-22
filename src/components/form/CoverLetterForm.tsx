@@ -18,8 +18,6 @@ export function CoverLetterForm() {
       personalInfo.phone,
       personalInfo.address,
       coverLetterText,
-      personalInfo.title,
-      personalInfo.website,
     );
   };
 
