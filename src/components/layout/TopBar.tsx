@@ -3,6 +3,8 @@ import { useResumeStore } from '@/store/useResumeStore'
 import type { ProfileName } from '@/types/resume'
 
 const profiles: { key: ProfileName; label: string }[] = [
+  { key: 'jakub', label: 'JAKUB MATEUSZ ZURAWINSKI' },
+  { key: 'howard', label: 'Howard Na' },
   { key: 'allen', label: 'Allen Wang' },
   { key: 'chris', label: 'Chris Yang' },
   { key: 'henry', label: 'Henry Yang' },

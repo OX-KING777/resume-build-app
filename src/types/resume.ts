@@ -48,7 +48,7 @@ export interface Skill {
 
 export type TemplateName = 'classic' | 'executive' | 'sidebar' | 'minimal' | 'professional' | 'elegant' | 'bold' | 'accent' | 'creative' | 'modern' | 'clean' | 'impact' | 'warmth' | 'corporate';
 
-export type ProfileName = 'allen' | 'chris' | 'henry' | 'alex' | 'saurav' | 'chrislin' | 'david' | 'beka' | 'tanner' | 'hao' | 'peter' | 'albert' | 'thomas' | 'davidwu' | 'degao';
+export type ProfileName = 'allen' | 'chris' | 'henry' | 'alex' | 'saurav' | 'chrislin' | 'david' | 'beka' | 'tanner' | 'hao' | 'peter' | 'albert' | 'thomas' | 'davidwu' | 'degao' | 'jakub' | 'howard';
 
 export interface ResumeData {
   personalInfo: PersonalInfo;

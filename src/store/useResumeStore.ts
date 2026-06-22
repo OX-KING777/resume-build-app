@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { parseResumeImportJson } from '@/utils/parseResumeImportJson';
 import type {
   PersonalInfo,
   WorkExperience,
@@ -43,6 +44,23 @@ interface ResumeState {
 }
 
 const createId = () => crypto.randomUUID();
+
+/** Parse JSON `Period` like `2024.3 - Present` or `2023.12 - 2024.2` into resume fields. */
+function parseExperiencePeriod(period: string): Pick<WorkExperience, 'startDate' | 'endDate' | 'current'> {
+  const trimmed = period.trim();
+  const dash = /\s+[-–—]\s+/u;
+  const parts = trimmed.split(dash).map((p) => p.trim()).filter(Boolean);
+  if (parts.length < 2) {
+    return { startDate: trimmed, endDate: '', current: false };
+  }
+  const [start, end] = parts;
+  const present = /^present$/i.test(end);
+  return {
+    startDate: start,
+    endDate: present ? '' : end,
+    current: present,
+  };
+}
 
 // ─── ALLEN WANG DEFAULTS ──────────────────────────────────────────────────
 
@@ -368,6 +386,55 @@ const createAlbertEducation = (): Education[] => [
 
 const createAlbertSkills = (): Skill[] => [];
 
+// ___ JAKUB MATEUSZ ZURAWINSKI DEFAULTS ___________________________________
+
+const jakubPersonalInfo: PersonalInfo = {
+  fullName: 'JAKUB MATEUSZ ZURAWINSKI',
+  title: '',
+  email: '',
+  phone: '',
+  address: 'Warsaw',
+  linkedin: '',
+  website: '',
+  summary: '',
+} 
+
+const createJakubWorkExperience = (): WorkExperience[] => [
+  { id: createId(), company: 'SAP', location: 'Walldorf, Baden-Wurthemberg, Germany', position: '', startDate: 'Apr 2024', endDate: '', current: true, description: '', highlights: [] },
+  { id: createId(), company: 'OPEN Health', location: 'London, England, UK', position: '', startDate: 'May 2022', endDate: 'Mar 2024', current: false, description: '', highlights: [] },
+  { id: createId(), company: 'Ripjar', location: 'Cheltenham, Gloucestershire, UK', position: '', startDate: 'Sep 2021', endDate: 'Mar 2022', current: false, description: '', highlights: [] },
+];
+const createJakubEducation = (): Education[] => [
+  { id: createId(), institution: 'Warsaw University of Technology', degree: "Bachelor of Science", field: 'Computer Science and Information Systems', startDate: ' Oct 2017', endDate: 'Mar 2021 ', gpa: '', description: '' },
+];
+
+const createJakubSkills = (): Skill[] => [];
+
+// ___ HOWARD NA DEFAULTS ___________________________________
+
+const howardPersonalInfo: PersonalInfo = {
+  fullName: 'Howard Na',
+  title: '',
+  email: '',
+  phone: '',
+  address: 'Austin, TX',
+  linkedin: '',
+  website: '',
+  summary: '',
+} 
+
+const createHowardWorkExperience = (): WorkExperience[] => [
+  { id: createId(), company: 'SAP', location: 'Walldorf, Baden-Wurthemberg, Germany', position: '', startDate: 'Apr 2024', endDate: '', current: true, description: '', highlights: [] },
+  { id: createId(), company: 'OPEN Health', location: 'London, England, UK', position: '', startDate: 'May 2022', endDate: 'Mar 2024', current: false, description: '', highlights: [] },
+  { id: createId(), company: 'Ripjar', location: 'Cheltenham, Gloucestershire, UK', position: '', startDate: 'Sep 2021', endDate: 'Mar 2022', current: false, description: '', highlights: [] },
+];
+const createHowardEducation = (): Education[] => [
+  { id: createId(), institution: 'Warsaw University of Technology', degree: "Bachelor of Science", field: 'Computer Science and Information Systems', startDate: ' Oct 2017', endDate: 'Mar 2021 ', gpa: '', description: '' },
+];
+
+const createHowardSkills = (): Skill[] => [];
+
+
 // ─── THOMAS J PATREY DEFAULTS ────────────────────────────────────────────
 
 const thomasPersonalInfo: PersonalInfo = {
@@ -426,18 +493,17 @@ const degaoPersonalInfo: PersonalInfo = {
   title: '',
   email: 'degao.chen27@gmail.com',
   phone: '(610) 244-1830',
-  address: 'San Francisco',
+  address: 'Fremont, CA',
   linkedin: '',
   website: '',
   summary: '',
 };
 
 const createDegaoWorkExperience = (): WorkExperience[] => [
-  { id: createId(), company: 'Lyft', location: 'San Francisco', position: '', startDate: 'Mar 2024', endDate: '', current: true, description: '', highlights: [] },
-  { id: createId(), company: 'The Walt Disney Company', location: 'Burbank, California', position: '', startDate: 'Dec 2023', endDate: 'Feb 2024', current: false, description: '', highlights: [] },
-  { id: createId(), company: 'Wish', location: 'San Francisco', position: '', startDate: 'Jan 2022', endDate: 'Oct 2023', current: false, description: '', highlights: [] },
-  { id: createId(), company: 'Invesco Ltd.', location: 'San Francisco', position: '', startDate: 'Jan 2020', endDate: 'Jan 2022', current: false, description: '', highlights: [] },
-  { id: createId(), company: 'Wells Fargo', location: 'San Francisco', position: '', startDate: 'Feb 2016', endDate: 'Jan 2020', current: false, description: '', highlights: [] },
+  { id: createId(), company: 'Lyft', location: 'San Francisco, California', position: '', startDate: 'Nov 2023', endDate: '', current: true, description: '', highlights: [] },
+  { id: createId(), company: 'Wish', location: 'San Francisco, California', position: '', startDate: 'Jan 2022', endDate: 'Oct 2023', current: false, description: '', highlights: [] },
+  { id: createId(), company: 'Invesco Ltd.', location: 'San Francisco, California', position: '', startDate: 'Jan 2020', endDate: 'Jan 2022', current: false, description: '', highlights: [] },
+  { id: createId(), company: 'Wells Fargo', location: 'San Francisco, California', position: '', startDate: 'Feb 2016', endDate: 'Jan 2020', current: false, description: '', highlights: [] },
   { id: createId(), company: 'CCS Global Tech', location: 'San Diego, California', position: '', startDate: 'Jul 2015', endDate: 'Feb 2016', current: false, description: '', highlights: [] },
 ];
 
@@ -466,6 +532,8 @@ const PROFILE_TEMPLATE: Record<ProfileName, TemplateName> = {
   thomas: 'warmth',
   davidwu: 'corporate',
   degao: 'impact',
+  jakub: 'impact',
+  howard: 'impact',
 };
 
 const getProfileDefaults = (profile: ProfileName) => {
@@ -500,6 +568,10 @@ const getProfileDefaults = (profile: ProfileName) => {
       return { personalInfo: { ...davidwuPersonalInfo }, workExperience: createDavidwuWorkExperience(), education: createDavidwuEducation(), certifications: [] as Certification[], skills: createDavidwuSkills() };
     case 'degao':
       return { personalInfo: { ...degaoPersonalInfo }, workExperience: createDegaoWorkExperience(), education: createDegaoEducation(), certifications: [] as Certification[], skills: createDegaoSkills() };
+    case 'jakub':
+      return { personalInfo: { ...jakubPersonalInfo }, workExperience: createJakubWorkExperience(), education: createJakubEducation(), certifications: [] as Certification[], skills: createJakubSkills() };
+    case 'howard':
+      return { personalInfo: { ...howardPersonalInfo }, workExperience: createHowardWorkExperience(), education: createHowardEducation(), certifications: [] as Certification[], skills: createHowardSkills() };
   }
 };
 
@@ -609,16 +681,16 @@ export const useResumeStore = create<ResumeState>()(
       },
 
       importFromJson: (jsonStr: string) => {
-        const data = JSON.parse(jsonStr);
+        const data = parseResumeImportJson(jsonStr) as Record<string, unknown>;
         const state = get();
 
         // Update Title & Summary
-        if (data.Title || data.Summary) {
+        if (data.Title !== undefined || data.Summary !== undefined) {
           set((s) => ({
             personalInfo: {
               ...s.personalInfo,
-              ...(data.Title !== undefined && { title: data.Title }),
-              ...(data.Summary !== undefined && { summary: data.Summary }),
+              ...(data.Title !== undefined && { title: String(data.Title) }),
+              ...(data.Summary !== undefined && { summary: String(data.Summary) }),
             },
           }));
         }
@@ -630,7 +702,7 @@ export const useResumeStore = create<ResumeState>()(
             state.removeSkill(s.id);
           }
           // Add new ones from JSON
-          const techSkills = data['Technical Skills'];
+          const techSkills = data['Technical Skills'] as Record<string, unknown>;
           for (const [category, items] of Object.entries(techSkills)) {
             const store = useResumeStore.getState();
             store.addSkill();
@@ -646,21 +718,47 @@ export const useResumeStore = create<ResumeState>()(
         // Update Experience — match by company order (Company 1, Company 2, etc.)
         if (data.Experience) {
           const currentWork = useResumeStore.getState().workExperience;
-          const experienceEntries = Object.keys(data.Experience)
-            .sort() // Company 1, Company 2, Company 3, Company 4
-            .map((key) => data.Experience[key]);
+          const experienceEntries = Object.keys(data.Experience as Record<string, unknown>)
+            .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
+            .map((key) => (data.Experience as Record<string, Record<string, unknown>>)[key]);
 
           for (let i = 0; i < Math.min(experienceEntries.length, currentWork.length); i++) {
             const entry = experienceEntries[i];
             const updates: Partial<WorkExperience> = {};
-            if (entry['Role Title']) updates.position = entry['Role Title'];
-            if (entry['Experience Content']) {
-              updates.highlights = Array.isArray(entry['Experience Content'])
-                ? entry['Experience Content']
-                : [entry['Experience Content']];
+            if (entry.Name !== undefined) updates.company = String(entry.Name);
+            if (entry.Period !== undefined) {
+              Object.assign(updates, parseExperiencePeriod(String(entry.Period)));
+            }
+            if (entry['Role Title'] !== undefined) updates.position = String(entry['Role Title']);
+            if (entry['Experience Content'] !== undefined) {
+              const raw = entry['Experience Content'];
+              updates.highlights = Array.isArray(raw)
+                ? (raw as unknown[]).map(String)
+                : [String(raw)];
             }
             useResumeStore.getState().updateWorkExperience(currentWork[i].id, updates);
           }
+        }
+
+        // ZIP filename target + cover letter body (from JSON only)
+        const companyFromJson =
+          typeof data['Company Name'] === 'string'
+            ? data['Company Name']
+            : typeof (data as { CompanyName?: unknown }).CompanyName === 'string'
+              ? ((data as { CompanyName: string }).CompanyName)
+              : undefined;
+        const coverFromJson =
+          typeof data['Cover Letter'] === 'string'
+            ? data['Cover Letter']
+            : typeof (data as { CoverLetter?: unknown }).CoverLetter === 'string'
+              ? ((data as { CoverLetter: string }).CoverLetter)
+              : undefined;
+
+        if (companyFromJson !== undefined || coverFromJson !== undefined) {
+          set(() => ({
+            ...(companyFromJson !== undefined && { companyName: companyFromJson }),
+            ...(coverFromJson !== undefined && { coverLetterText: coverFromJson }),
+          }));
         }
 
       },

@@ -1,4 +1,5 @@
 import { jsPDF } from 'jspdf';
+import { savePdfBlob } from '@/utils/savePdfBlob';
 
 const PAGE_W = 612;
 const PAGE_H = 792;
@@ -12,9 +13,21 @@ const BOTTOM_LIMIT = PAGE_H - MARGIN_BOTTOM;
 const BLK: [number, number, number] = [0, 0, 0];
 const GREY: [number, number, number] = [100, 100, 100];
 
+/** Normalize pasted / JSON-imported letter text for PDF output. */
+function normalizeCoverLetterText(raw: string): string {
+  let t = raw.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+  // Sometimes a string contains literal backslash-n instead of newlines (e.g. mis-copied JSON)
+  if (!/\n/.test(t) && t.includes('\\n')) {
+    t = t.replace(/\\n/g, '\n');
+  }
+  // Resume-style markdown from JSON — Helvetica cannot render ** as bold
+  t = t.replace(/\*\*([^*]+)\*\*/g, '$1').replace(/\*\*/g, '');
+  return t.trim();
+}
+
 /**
  * Generate a well-formatted cover letter PDF from plain text.
- * Paragraphs are separated by blank lines in the input.
+ * Paragraphs are separated by one or more blank lines in the input.
  */
 export function generateCoverLetterBlob(
   fullName: string,
@@ -22,36 +35,43 @@ export function generateCoverLetterBlob(
   phone: string,
   address: string,
   text: string,
+  jobTitle?: string,
+  website?: string,
 ): Blob {
   const doc = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'letter' });
+  const body = normalizeCoverLetterText(text);
 
   let y = MARGIN_TOP;
 
+  // ---- Job title header (small, gray) ----
+  if (jobTitle && jobTitle.trim()) {
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    doc.setTextColor(...GREY);
+    doc.text(jobTitle.toUpperCase(), MARGIN_LEFT, y);
+    y += 14;
+  }
+
   // ---- Name header ----
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(22);
+  doc.setFontSize(28);
   doc.setTextColor(...BLK);
-  doc.text(fullName, MARGIN_LEFT, y);
-  y += 8;
+  const displayName = fullName.trim() || 'Applicant';
+  doc.text(displayName, MARGIN_LEFT, y);
+  y += 10;
 
-  // Thin line under name
-  doc.setDrawColor(...BLK);
-  doc.setLineWidth(1.5);
-  doc.line(MARGIN_LEFT, y, PAGE_W - MARGIN_RIGHT, y);
-  y += 14;
-
-  // ---- Contact info ----
+  // ---- Contact info with labels ----
   const contactParts: string[] = [];
-  if (email) contactParts.push(email);
-  if (phone) contactParts.push(phone);
-  if (address) contactParts.push(address);
+  if (phone) contactParts.push(`T: ${phone}`);
+  if (website) contactParts.push(`W: ${website}`);
+  if (email) contactParts.push(`E: ${email}`);
 
   if (contactParts.length > 0) {
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(9);
-    doc.setTextColor(...GREY);
-    doc.text(contactParts.join('  |  '), MARGIN_LEFT, y);
-    y += 24;
+    doc.setTextColor(...BLK);
+    doc.text(contactParts.join('  //  '), MARGIN_LEFT, y);
+    y += 20;
   }
 
   // ---- Body text ----
@@ -61,24 +81,15 @@ export function generateCoverLetterBlob(
 
   const lineHeight = 10.5 * 1.5; // font size * leading
 
-  // Split input into paragraphs by blank lines
-  const paragraphs = text.split(/\n\s*\n/).filter((p) => p.trim());
+  // Paragraphs: blank line(s) between blocks; also treat single \n inside a block as soft break → merge to spaces for wrap
+  const paragraphs = body.split(/\n{2,}/).map((p) => p.trim()).filter(Boolean);
 
   for (let pi = 0; pi < paragraphs.length; pi++) {
-    const para = paragraphs[pi].trim();
+    const para = paragraphs[pi];
+    const isClosing = /^(sincerely|regards|best|thank|yours|warm)/im.test(para);
 
-    // Check if this looks like a greeting/closing (short single line)
-    const isSingleLine = !para.includes('\n') && para.length < 80;
-    const isClosing = /^(sincerely|regards|best|thank|yours|warm)/i.test(para);
-
-    if (isSingleLine && !isClosing) {
-      // Render as a single line (e.g., "Dear Hiring Manager,")
-      y = checkPageBreak(doc, y, lineHeight);
-      doc.text(para, MARGIN_LEFT, y);
-      y += lineHeight + 4;
-    } else if (isClosing) {
-      // Closing block — render each line separately
-      const lines = para.split('\n').map((l) => l.trim());
+    if (isClosing) {
+      const lines = para.split(/\n/).map((l) => l.trim()).filter(Boolean);
       for (const line of lines) {
         y = checkPageBreak(doc, y, lineHeight);
         doc.text(line, MARGIN_LEFT, y);
@@ -86,16 +97,14 @@ export function generateCoverLetterBlob(
       }
       y += 4;
     } else {
-      // Regular paragraph — word wrap
-      const cleanText = para.replace(/\n/g, ' ').replace(/\s+/g, ' ');
+      const cleanText = para.replace(/\n+/g, ' ').replace(/\s+/g, ' ').trim();
       const wrapped: string[] = doc.splitTextToSize(cleanText, CONTENT_W);
-
       for (const line of wrapped) {
         y = checkPageBreak(doc, y, lineHeight);
         doc.text(line, MARGIN_LEFT, y);
         y += lineHeight;
       }
-      y += 8; // paragraph spacing
+      y += 8;
     }
   }
 
@@ -110,17 +119,23 @@ export function generateCoverLetterBlob(
   }
 }
 
-export function downloadCoverLetterPdf(
+export async function downloadCoverLetterPdf(
   fullName: string,
   email: string,
   phone: string,
   address: string,
   text: string,
-): void {
-  const blob = generateCoverLetterBlob(fullName, email, phone, address, text);
-  const link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);
-  link.download = `${fullName} - Cover Letter.pdf`;
-  link.click();
-  URL.revokeObjectURL(link.href);
+  jobTitle?: string,
+  website?: string,
+): Promise<void> {
+  const blob = generateCoverLetterBlob(fullName, email, phone, address, text, jobTitle, website);
+  const safeName = (fullName.trim() || 'Cover_Letter').replace(/[/\\?%*:|"<>]/g, '_');
+  const suggestedName = `${safeName} - Cover Letter.pdf`;
+  await savePdfBlob(blob, suggestedName, () => {
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = suggestedName;
+    link.click();
+    URL.revokeObjectURL(link.href);
+  }, { persistKey: 'cover-letter-pdf' });
 }

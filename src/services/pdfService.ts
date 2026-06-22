@@ -1,4 +1,5 @@
 import { jsPDF } from 'jspdf';
+import { savePdfBlob } from '@/utils/savePdfBlob';
 import type {
   PersonalInfo,
   WorkExperience,
@@ -2119,6 +2120,7 @@ function renderCorporatePdf(doc: jsPDF, data: PdfInput) {
 // ===== Main rendering dispatcher =====
 
 function createPdfDoc(data: PdfInput): jsPDF {
+  console.log(data);
   const { selectedTemplate } = data;
   const colors = COLORS[selectedTemplate];
 
@@ -2350,8 +2352,10 @@ export function generatePdfBlob(data: PdfInput): Blob {
   return doc.output('blob');
 }
 
-/** Export PDF as a file download */
+/** Export PDF: uses save picker when supported so you can replace an existing file with the same name (avoids Degao_Chen_Resume (1).pdf). */
 export async function exportToPdf(data: PdfInput, fileName: string): Promise<void> {
   const doc = createPdfDoc(data);
-  doc.save(`${fileName}.pdf`);
+  const suggestedName = `${fileName}.pdf`;
+  const blob = doc.output('blob');
+  await savePdfBlob(blob, suggestedName, () => doc.save(suggestedName), { persistKey: 'resume-pdf' });
 }

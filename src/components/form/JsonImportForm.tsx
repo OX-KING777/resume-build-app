@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { FileJson } from 'lucide-react';
 import { useResumeStore } from '@/store/useResumeStore';
 import { FormSection } from '@/components/form/FormSection';
-import Input from '@/components/ui/Input';
 import TextArea from '@/components/ui/TextArea';
 
 const PLACEHOLDER = `{
@@ -14,27 +13,39 @@ const PLACEHOLDER = `{
   },
   "Experience": {
     "Company 1": {
-      "Name": "Intuit",
-      "Period": "2024.8 – Present",
+      "Name": "Example Corp",
+      "Period": "2024.3 - Present",
       "Role Title": "Senior Software Engineer",
       "Experience Content": [
         "Led migration of microservices...",
         "Reduced API latency by 40%..."
       ]
     }
-  }
+  },
+  "Company Name": "Acme Inc",
+  "Cover Letter": "Dear Hiring Manager,\\n\\n..."
 }`;
 
 export function JsonImportForm() {
   const selectedProfile = useResumeStore((state) => state.selectedProfile);
   const importFromJson = useResumeStore((state) => state.importFromJson);
-  const companyName = useResumeStore((state) => state.companyName);
-  const setCompanyName = useResumeStore((state) => state.setCompanyName);
   const [jsonText, setJsonText] = useState('');
   const [status, setStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
-
-  const JSON_IMPORT_PROFILES = ['allen', 'albert', 'david', 'hao', 'peter', 'chris', 'henry', 'alex', 'saurav', 'chrislin', 'beka', 'tanner', 'thomas', 'davidwu', 'degao'];
-  if (!JSON_IMPORT_PROFILES.includes(selectedProfile)) return null;
+  console.log(selectedProfile);
+  const JSON_IMPORT_PROFILES = ['allen', 'albert', 'david', 'hao', 'peter', 'chris', 'henry', 'alex', 'saurav', 'chrislin', 'beka', 'tanner', 'thomas', 'davidwu', 'degao', 'jakub','howard'];
+  if (!JSON_IMPORT_PROFILES.includes(selectedProfile)) {
+    return (
+      <FormSection
+        title="JSON Import"
+        icon={<FileJson className="h-5 w-5" />}
+        defaultOpen={true}
+      >
+        <p className="text-xs text-gray-500">
+          Choose a JSON-enabled profile in the top bar (Allen, Albert, David, Hao, Peter, Chris, Henry, Alex, Saurav, Chrislin, Beka, Tanner, Thomas, David Wu, or Degao) to paste and import resume JSON.
+        </p>
+      </FormSection>
+    );
+  }
 
   const handleImport = () => {
     if (!jsonText.trim()) {
@@ -61,14 +72,10 @@ export function JsonImportForm() {
       defaultOpen={true}
     >
       <div className="space-y-3">
-        <Input
-          label="Company Name (for ZIP download)"
-          placeholder="e.g. Google, Amazon, Meta"
-          value={companyName}
-          onChange={(e) => setCompanyName(e.target.value)}
-        />
         <p className="text-xs text-gray-500">
-          Paste a full JSON with Title, Summary, Technical Skills, Experience, and Education to populate all fields at once.
+          Paste JSON with Title, Summary, Technical Skills, Experience, Company Name (for ZIP filename), and Cover Letter.
+          Each experience entry should include Name, Period, Role Title, and Experience Content. Your name, contact details, education, and template still follow the profile selected in the top bar.
+          In Cover Letter, use \n for line breaks inside the JSON string (the importer also tries to fix pasted multi-line letters).
         </p>
         <TextArea
           label="JSON Data"
