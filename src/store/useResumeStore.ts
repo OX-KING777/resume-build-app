@@ -533,7 +533,7 @@ const PROFILE_TEMPLATE: Record<ProfileName, TemplateName> = {
   davidwu: 'corporate',
   degao: 'impact',
   jakub: 'impact',
-  howard: 'impact',
+  howard: 'professional',
 };
 
 const getProfileDefaults = (profile: ProfileName) => {
